@@ -1,0 +1,19 @@
+{
+  "name": "quickaudit",
+  "version": "1.0.0",
+  "description": "One-click OWASP-style security checklist for the page in your browser tab.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "node test/run-tests.mjs && node test/compat.mjs && node test/integration.mjs && node test/ext-smoke.mjs",
+    "test:unit": "node test/run-tests.mjs",
+    "test:compat": "node test/compat.mjs",
+    "test:ext": "node test/ext-smoke.mjs",
+    "test:live": "node test/real-sites.mjs",
+    "fixture-server": "node test/fixture-server.mjs",
+    "scan": "node tools/cli.mjs",
+    "build": "node tools/build.mjs",
+    "icons": "node tools/make-icons.mjs"
+  },
+  "license": "MIT"
+}

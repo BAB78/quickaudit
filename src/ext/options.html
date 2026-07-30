@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>QuickAudit — Settings</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+<main>
+  <h1>QuickAudit settings</h1>
+
+  <section>
+    <h2>Checks</h2>
+    <p class="hint">Turn individual checks off if they're noise for your stack. Pro unlocks saved profiles.</p>
+    <div id="check-list" class="check-list"></div>
+  </section>
+
+  <section id="active">
+    <h2>Active check — exposed sensitive files</h2>
+    <p class="hint">
+      QA-09 is the only check that sends requests. It performs up to 14 <code>GET</code> requests
+      for well-known paths (<code>/.env</code>, <code>/.git/HEAD</code>, …) against the origin of the
+      tab you're on. No crawling, no wordlists, no other host — ever.
+    </p>
+    <label class="toggle">
+      <input type="checkbox" id="activeChecks">
+      <span>Enable active file-exposure probing</span>
+    </label>
+    <div id="consent" class="consent" hidden>
+      <p><b>Only enable this for sites you own or are explicitly authorised to test.</b>
+      Unsolicited probing of third-party servers may be unlawful where you live and will show up
+      in their logs as your IP address.</p>
+      <label class="toggle">
+        <input type="checkbox" id="consentBox">
+        <span>I understand, and I will only run this against systems I'm authorised to test.</span>
+      </label>
+    </div>
+  </section>
+
+  <section id="pro">
+    <h2>QuickAudit Pro</h2>
+    <div id="license-state"></div>
+    <p class="hint">One-time purchase. Unlocks HTML/PDF report export, saved custom check sets, and scan history.</p>
+    <div class="key-row">
+      <input type="text" id="key" placeholder="QA1.…" spellcheck="false" autocomplete="off">
+      <button id="activate" class="primary">Activate</button>
+    </div>
+    <p id="key-msg" class="msg"></p>
+    <p class="hint">Licence keys verify offline against a public key built into the extension.
+      No account, no server, nothing phones home.</p>
+  </section>
+
+  <section>
+    <h2>Privacy</h2>
+    <p class="hint">
+      QuickAudit sends exactly one kind of data off your machine: detected library
+      <code>name@version</code> strings, to <code>api.osv.dev</code>, to look up known CVEs.
+      No URLs, no page content, no cookie values, no analytics, no accounts. Scan results are
+      stored in local extension storage only.
+    </p>
+  </section>
+</main>
+<script type="module" src="options.js"></script>
+</body>
+</html>

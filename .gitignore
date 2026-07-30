@@ -1,0 +1,5 @@
+.keys/
+build/
+node_modules/
+.playwright-mcp/
+test/real-sites-results.json
