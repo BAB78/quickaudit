@@ -383,13 +383,59 @@ await t('runner: enabled filter runs only the requested checks', async () => {
 });
 
 // ── licensing ───────────────────────────────────────────────────────────────────
-const { verifyKey } = await import('../src/ext/license.js');
-const VALID_KEY = 'QA1.eyJlIjoiYnV5ZXJAZXhhbXBsZS5jb20iLCJvIjoiT1JERVItOTAwMSIsInQiOiIyMDI2LTA3LTMwIiwicCI6InBybyIsInYiOjF9.ntgp22WlsMJdK4qW35JSTAdLK7NtHMPLMXu-uIk6YY9sXWuI7P8Y7kwMgRhVr_XAoWy9qkagBwfOZ5IdTmf_WA';
+// license.js reads storage through the shim, so it needs a namespace to resolve against.
+const licStore = {};
+globalThis.chrome = {
+  storage: {
+    local: {
+      get: async (k) => (k in licStore ? { [k]: licStore[k] } : {}),
+      set: async (o) => { Object.assign(licStore, o); },
+      remove: async (k) => { delete licStore[k]; },
+    },
+  },
+  runtime: { getManifest: () => ({ version: '1.0.0' }) },
+};
+const { verifyKey, activate, getLicense, isPro } = await import('../src/ext/license.js');
+
+/** Issued with `m: 1` — unlocks 1.x only. */
+const V1_KEY = 'QA1.eyJlIjoiYnV5ZXJAZXhhbXBsZS5jb20iLCJvIjoiT1JERVItOTAwMSIsInQiOiIyMDI2LTA3LTMwIiwicCI6InBybyIsInYiOjEsIm0iOjF9.SDMRYt79qNYJtyP1inj4iYyqL2LOKoL6RaLKSLzMN8Yepr3FDAqzqhCczFsREqtSRJUS-hT3tuou98SynkVA2g';
+/** Issued with `m: 2` — a buyer given the next major version too. */
+const V2_KEY = 'QA1.eyJlIjoiZWFybHlAZXhhbXBsZS5jb20iLCJvIjoiT1JERVItOTAwMiIsInQiOiIyMDI2LTA3LTMwIiwicCI6InBybyIsInYiOjEsIm0iOjJ9.N3eVdvxblbN2eusE98GkTSQ7fHtgUyNuaz4MWV8kNXlI7O8jx9Rw8Q9DmKGRjczclk5q9EabTN46ihwWa9M-zA';
+/** Pre-ceiling key with no `m` field at all — must be grandfathered, never rejected. */
+const LEGACY_KEY = 'QA1.eyJlIjoiYnV5ZXJAZXhhbXBsZS5jb20iLCJvIjoiT1JERVItOTAwMSIsInQiOiIyMDI2LTA3LTMwIiwicCI6InBybyIsInYiOjF9.ntgp22WlsMJdK4qW35JSTAdLK7NtHMPLMXu-uIk6YY9sXWuI7P8Y7kwMgRhVr_XAoWy9qkagBwfOZ5IdTmf_WA';
+const VALID_KEY = V1_KEY;
 
 await t('license: a key signed by the real private key verifies offline', async () => {
   const r = await verifyKey(VALID_KEY);
   assert.equal(r.valid, true, r.reason);
   assert.equal(r.email, 'buyer@example.com');
+  assert.equal(r.maxMajor, 1);
+});
+
+await t('license: version ceiling covers its own major and blocks the next', async () => {
+  await activate(V1_KEY);
+  assert.equal(await isPro({ major: 1 }), true, 'a 1.x key must unlock 1.x');
+  assert.equal(await isPro({ major: 2 }), false, 'a 1.x key must not unlock 2.x');
+
+  // The distinction that matters for support: still a genuine key, just not for this version.
+  const lic = await getLicense({ major: 2 });
+  assert.equal(lic.valid, true);
+  assert.equal(lic.covered, false);
+  assert.match(lic.reason, /unlocks QuickAudit 1\.x.*running 2\.x/i);
+});
+
+await t('license: a key sold with headroom unlocks the next major too', async () => {
+  await activate(V2_KEY);
+  assert.equal(await isPro({ major: 1 }), true);
+  assert.equal(await isPro({ major: 2 }), true);
+  assert.equal(await isPro({ major: 3 }), false);
+});
+
+await t('license: keys issued before the ceiling existed are grandfathered forever', async () => {
+  await activate(LEGACY_KEY);
+  const r = await verifyKey(LEGACY_KEY);
+  assert.equal(r.maxMajor, Infinity, 'a missing `m` must not lock the buyer out');
+  assert.equal(await isPro({ major: 9 }), true);
 });
 await t('license: tampering with the payload invalidates the key', async () => {
   const [, body, sig] = VALID_KEY.split('.');

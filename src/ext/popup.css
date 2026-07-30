@@ -26,6 +26,12 @@ body {
   background: var(--bg); color: var(--fg);
 }
 
+/*
+ * body is a flex column with a max-height, so every chrome element must opt out of
+ * shrinking — otherwise they get compressed and clip their own text. Only .results flexes.
+ */
+header, .target, .scoreboard, .notes, footer { flex: none; }
+
 header {
   display: flex; align-items: center; justify-content: space-between;
   padding: 10px 12px; border-bottom: 1px solid var(--line);
@@ -42,6 +48,8 @@ header {
   padding: 7px 12px; font-size: 11.5px; color: var(--muted);
   border-bottom: 1px solid var(--line); word-break: break-all;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  /* overflow:hidden clips descenders unless the line box is given room. */
+  line-height: 1.8;
 }
 
 .scoreboard {
@@ -66,7 +74,7 @@ header {
 .tally li:nth-child(3) b { color: var(--pass); }
 .tally li:nth-child(4) b { color: var(--skip); }
 
-.results { flex: 1; overflow-y: auto; }
+.results { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
 .empty { padding: 22px 16px; color: var(--muted); text-align: center; }
 .empty .fine { font-size: 11px; margin-top: 10px; }
 code { font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 11px; }

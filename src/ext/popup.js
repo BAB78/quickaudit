@@ -26,7 +26,7 @@ async function scan() {
   const btn = $('scan');
   btn.disabled = true;
   btn.textContent = 'Scanning…';
-  $('idle').innerHTML = '<p>Running ten checks…</p>';
+  showStatus('Running ten checks…');
 
   try {
     const report = await sendMessage({ type: 'scan', tabId: tab.id });
@@ -65,6 +65,18 @@ function askPermission({ needsPermission, origin }) {
   });
   box.appendChild(go);
   $('results').appendChild(box);
+}
+
+/**
+ * Replace the results area with a one-line status.
+ *
+ * Deliberately does not touch #idle: that node only exists until the first render clears
+ * #results, so reaching for it is a null dereference on every rescan.
+ */
+function showStatus(text) {
+  const box = el('div', 'empty');
+  box.appendChild(Object.assign(el('p'), { textContent: text }));
+  $('results').replaceChildren(box);
 }
 
 function showError(msg) {

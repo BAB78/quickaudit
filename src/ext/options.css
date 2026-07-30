@@ -58,3 +58,4 @@ button.ghost { background: transparent; color: var(--fg); border: 1px solid var(
   border: 1px solid var(--line); margin-bottom: 12px; font-size: 13px;
 }
 .pro-active b { color: var(--pass); }
+.pro-active b.stale { color: var(--muted); }
