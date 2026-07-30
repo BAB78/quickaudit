@@ -23,6 +23,17 @@ const t = (name, fn) => {
 const built = Object.fromEntries(Object.keys(TARGETS).map((k) => [k, build(k)]));
 
 // ── manifest validity per engine ────────────────────────────────────────────────
+t('manifest fields fit the store limits', () => {
+  // The Chrome Web Store rejects the upload outright rather than truncating, so these are
+  // hard limits, not style guidance.
+  for (const [name, { manifest }] of Object.entries(built)) {
+    assert.ok(manifest.description.length <= 132,
+      `${name}: description is ${manifest.description.length} chars, limit is 132`);
+    assert.ok(manifest.name.length <= 75, `${name}: name is ${manifest.name.length} chars, limit is 75`);
+    assert.ok(manifest.description.length > 20, `${name}: description is too short to be useful`);
+  }
+});
+
 t('every target produces a valid MV3 manifest with the shared essentials', () => {
   for (const [name, { manifest }] of Object.entries(built)) {
     assert.equal(manifest.manifest_version, 3, `${name}: must be MV3`);

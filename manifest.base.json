@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "QuickAudit — web security checklist",
   "version": "1.0.0",
-  "description": "One-click OWASP-style security checklist for the page you're on. Headers, cookies, mixed content, exposed files, vulnerable JS libraries.",
+  "description": "Ten-point OWASP-style security checklist for the page you're on: headers, cookies, mixed content, exposed files, JS library CVEs.",
   "action": {
     "default_popup": "src/ext/popup.html",
     "default_title": "Run QuickAudit on this page",
