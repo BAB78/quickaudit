@@ -78,7 +78,28 @@ adds no fee at all; what it adds is roughly a day of work — a macOS container 
 a Mac App Distribution certificate that doesn't exist yet, and a stricter review. See
 [BROWSERS.md](BROWSERS.md).
 
-## Store account decision — needs your call
+## Seller details (decided)
+
+Publishing as **BAB Studios**, GitHub `BAB78`, **UK sole trader**.
+
+For the payment signup that means:
+
+- **Legal/tax identity** — Bright Bediako as an individual. UK sole traders trade under their
+  own legal name; "BAB Studios" is a trading name, not a separate legal person. Verification
+  documents must match the individual, not the trading name.
+- **Display/store name** — "BAB Studios". This is what appears on customers' card statements.
+- **VAT** — nothing to register for. The UK VAT threshold is far above anything this will earn,
+  and because the platform is merchant of record it accounts for VAT on the sale anyway. This
+  is exactly the reason not to use raw Stripe.
+- **HMRC** — income counts as self-employment income. The UK trading allowance means the first
+  **£1,000** of gross self-employed income in a tax year need not be reported. Given the
+  realistic first-year estimate below, this may well cover it — but confirm against current
+  HMRC guidance rather than taking it from here, and note the allowance is across *all* your
+  self-employed income, not per project.
+- **Country** — United Kingdom is fully supported for both bank payouts and Stripe Managed
+  Payments, so there is no payout-eligibility risk to work around.
+
+## Store account decision — resolved
 
 Your earlier releases went out under the BAB Studios Google Play account. **Chrome Web Store
 is a separate developer program with its own one-time $5 registration fee**, so publishing

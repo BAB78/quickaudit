@@ -39,7 +39,7 @@ Full definitions and rationale: [PRD.md](PRD.md).
 ## Install (development)
 
 ```bash
-git clone <repo> && cd quickaudit
+git clone https://github.com/BAB78/quickaudit && cd quickaudit
 node tools/make-icons.mjs   # generates icons/
 node tools/build.mjs        # generates build/{chrome,firefox,safari}/
 ```

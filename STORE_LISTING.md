@@ -109,7 +109,7 @@ subscription, no account, no server — that unlocks HTML/PDF report export, sav
 sets, and scan history. Licence keys verify offline against a public key inside the
 extension.
 
-Source: https://github.com/YOURNAME/quickaudit
+Source: https://github.com/BAB78/quickaudit
 
 ---
 
@@ -187,11 +187,12 @@ update path.
 
 ## Pre-submission checklist
 
-- [ ] Choose the publishing account (see MONETIZATION.md — this decision is yours)
+- [x] Publishing identity chosen: **BAB Studios** (GitHub `BAB78`, UK sole trader)
+- [x] Source URL set to `https://github.com/BAB78/quickaudit`
 - [ ] Pay the one-time $5 Chrome Web Store registration fee (Edge and AMO are free)
-- [ ] Replace `YOURNAME` in the source URL above and in `README.md`
 - [ ] Set a real contact address on the AMO listing (required, and publicly visible)
-- [ ] Host a privacy policy at a public URL (text is in `PRIVACY.md`)
+- [ ] Host a privacy policy at a public URL — once the repo is public, use
+      `https://github.com/BAB78/quickaudit/blob/master/PRIVACY.md`
 - [ ] Capture the five screenshots
 - [ ] `npm test` green (unit + compat + integration + both namespace modes)
 - [ ] `node tools/build.mjs` → upload the per-store zips from `build/`
