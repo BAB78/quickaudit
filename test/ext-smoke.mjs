@@ -146,11 +146,12 @@ await t(`shim resolves the ${mode} namespace`, () => {
   assert.equal(engine, mode === 'firefox' ? 'firefox' : 'chromium');
 });
 
-await t('webRequest listener uses extraHeaders only where it is supported', () => {
-  // Firefox rejects 'extraHeaders' outright; Chromium needs it to observe Set-Cookie.
-  const extra = state.webRequestArgs.extra;
-  assert.ok(extra.includes('responseHeaders'));
-  assert.equal(extra.includes('extraHeaders'), mode === 'chromium');
+await t('no webRequest listener is registered', () => {
+  // Chrome only delivers webRequest events to extensions holding host permissions at install
+  // time. Registering one anyway earns a permanent error badge for an API that never fires,
+  // so headers come from a credentialed fetch instead.
+  assert.equal(state.webRequestArgs, null,
+    'registering a webRequest listener would log an extension error for every user');
 });
 
 await t('scan is refused until the origin permission is granted', async () => {

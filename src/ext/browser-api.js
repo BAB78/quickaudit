@@ -22,8 +22,6 @@ export const engine = (() => {
 export const can = {
   /** Safari has no downloads API; the popup falls back to an <a download> click. */
   downloads: Boolean(api?.downloads?.download),
-  /** Observing real navigation headers. Absent or restricted on some Safari versions. */
-  webRequest: Boolean(api?.webRequest?.onHeadersReceived),
   /** Reading page globals needs MAIN-world injection: Chrome 111+, Firefox 128+, Safari 17+. */
   mainWorld: Boolean(api?.scripting?.executeScript),
   cookies: Boolean(api?.cookies?.getAll),

@@ -126,9 +126,9 @@ test/          unit + compat + integration + extension smoke + real-site corpus
 manifest.base.json  shared manifest; tools/build.mjs layers per-engine overrides on top
 ```
 
-`PageContext` is the seam. The extension builds one from `chrome.cookies` + `webRequest` +
-injected collectors; the CLI builds one from `fetch`. The ten checks can't tell the difference,
-which is what makes both the corpus run and CI possible.
+`PageContext` is the seam. The extension builds one from the cookie store, a credentialed
+`fetch` for headers, and two injected collectors; the CLI builds one from `fetch` alone. The
+ten checks can't tell the difference, which is what makes both the corpus run and CI possible.
 
 ## Not implemented in v1
 

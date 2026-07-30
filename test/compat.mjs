@@ -30,9 +30,14 @@ t('every target produces a valid MV3 manifest with the shared essentials', () =>
     assert.ok(manifest.optional_host_permissions?.length, `${name}: host access must stay optional`);
     assert.equal(manifest.host_permissions, undefined, `${name}: must not request host permissions at install`);
     assert.ok(manifest.options_ui?.page, `${name}: options_ui is the cross-browser options key`);
-    for (const p of ['activeTab', 'storage', 'cookies', 'scripting', 'webRequest']) {
+    for (const p of ['activeTab', 'storage', 'cookies', 'scripting']) {
       assert.ok(manifest.permissions.includes(p), `${name}: missing ${p}`);
     }
+    // webRequest only fires for extensions holding host permissions at install time, which
+    // is incompatible with asking per-origin at scan time. Requesting it anyway earns a
+    // permanent error badge in every user's extensions page for an API that never fires.
+    assert.ok(!manifest.permissions.includes('webRequest'),
+      `${name}: webRequest cannot work alongside optional host permissions`);
   }
 });
 
@@ -110,11 +115,15 @@ t('only browser-api.js touches a raw extension namespace', () => {
 t('no Chromium-only API is used without a feature guard', () => {
   const shim = readFileSync(path.join(root, 'src/ext/browser-api.js'), 'utf8');
   // Anything the shim exposes as a capability must be guarded before use.
-  for (const cap of ['downloads', 'webRequest', 'cookies']) {
+  for (const cap of ['downloads', 'cookies']) {
     assert.ok(new RegExp(`${cap}:\\s*Boolean\\(`).test(shim), `capability flag missing for ${cap}`);
   }
+  // Read raw here, not codeOf: URL patterns like 'http://*/*' contain both `/*` and `*/`,
+  // so naive comment stripping eats the code around them. Match on API access instead of
+  // the bare word, which lets the comments explain why webRequest is absent.
   const bg = readFileSync(path.join(root, 'src/ext/background.js'), 'utf8');
-  assert.ok(/if \(can\.webRequest\)/.test(bg), 'webRequest listener must be feature-guarded');
+  assert.ok(!/(api|chrome|browser)\.webRequest/.test(bg),
+    'the background must not call webRequest — it can never fire under optional host permissions');
   assert.ok(/if \(can\.cookies\)/.test(bg), 'cookies access must be feature-guarded');
   const popup = readFileSync(path.join(root, 'src/ext/popup.js'), 'utf8');
   assert.ok(/if \(can\.downloads\)/.test(popup), 'downloads must be feature-guarded');

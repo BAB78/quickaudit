@@ -7,7 +7,7 @@ stores; the per-store notes at the bottom cover what differs.
 |---|---|---|---|
 | Chrome Web Store | `quickaudit-1.0.0-chrome.zip` | $5 one-time | Reaches Chrome; Brave/Opera/Vivaldi users install from here too |
 | Microsoft Edge Add-ons | `quickaudit-1.0.0-chrome.zip` | **free** | Same package, no code changes |
-| addons.mozilla.org | `quickaudit-1.0.0-firefox.zip` | **free** | Human review for extensions requesting `webRequest` |
+| addons.mozilla.org | `quickaudit-1.0.0-firefox.zip` | **free** | Review is faster now that no `webRequest` permission is requested |
 | Apple App Store | `quickaudit-1.0.0-safari.zip` | **already paid** | Existing BAB Studios membership covers it; needs macOS + Xcode; unverified — see BROWSERS.md |
 
 **Recommendation: submit Chrome + Edge + Firefox first.** Two of the three are free, and
@@ -122,7 +122,7 @@ Reviewers reject vague answers here, so each is tied to a specific check.
 | `activeTab` | Identifies the page the user explicitly asked to scan when they click the toolbar button. |
 | `scripting` | Injects two short collectors into the audited page on demand: one reads `<meta>` CSP tags and the list of loaded subresources (checks 2, 3, 7); one reads library version globals such as `jQuery.fn.jquery` (check 8). Nothing is injected until the user clicks Scan. |
 | `cookies` | Check 6 inspects the `Secure`, `HttpOnly` and `SameSite` **flags** of cookies for the audited origin. Cookie values are never read, stored, or transmitted. |
-| `webRequest` | Used observationally (no blocking) to capture the response headers of the main-frame navigation, which is the input to checks 1–5 and 10. Reading them from the real navigation is more accurate than re-fetching the page. |
+| `downloads` | Saves the exported HTML report to disk when a Pro user clicks Export. Chromium and Firefox only; the Safari build omits it. |
 | `storage` | Stores the user's settings, the most recent report, the Pro licence key, and a 6-hour cache of OSV.dev lookups so repeat scans don't re-query the API. |
 | `downloads` | Saves the exported HTML report to disk when a Pro user clicks Export. |
 | Optional host permissions | Requested **per-origin at scan time**, never at install. Needed to read the audited site's response headers and cookie flags. The user grants access to one site at a time. |
@@ -168,13 +168,14 @@ Shield mark on white, `QuickAudit` wordmark, strapline *"Ten security checks. On
 The listing form is near-identical to Chrome's, so the copy above pastes straight in. Worth
 doing purely because it costs nothing.
 
-**addons.mozilla.org** — free, but extensions requesting `webRequest` get human review, so
-expect days rather than hours. Two things AMO reviewers specifically want:
+**addons.mozilla.org** — free. QuickAudit no longer requests `webRequest`, which is the
+permission that most reliably triggers slow human review, so this should move faster than
+originally planned. Two things AMO reviewers still want:
 
 - **Source-code submission.** The extension ships unminified, unbundled ES modules, so the
   uploaded package *is* the source. Say so; there is no build step to reproduce.
-- **A clear justification for `webRequest`.** Use the wording from the permissions table
-  above: observational only, no blocking, used solely to read main-frame response headers.
+- **A clear justification for `cookies`.** Use the wording from the permissions table above:
+  QuickAudit reads cookie *flags* only and never reads, stores or transmits cookie values.
 
 AMO also enforces the extension id (`quickaudit@babstudios.dev`) declared in
 `browser_specific_settings` — it must stay stable across versions or you lose the listing's

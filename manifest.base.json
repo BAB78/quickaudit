@@ -13,7 +13,7 @@
     "page": "src/ext/options.html",
     "open_in_tab": true
   },
-  "permissions": ["activeTab", "storage", "cookies", "scripting", "webRequest"],
+  "permissions": ["activeTab", "storage", "cookies", "scripting"],
   "optional_host_permissions": ["http://*/*", "https://*/*"],
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'none'; base-uri 'none'"

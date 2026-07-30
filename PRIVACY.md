@@ -38,9 +38,9 @@ from Chrome's extension storage controls.
 
 ## Requests QuickAudit makes
 
-**To the site you are scanning.** Reading response headers normally uses the headers your
-browser already received. If those aren't available, QuickAudit makes one request to the page
-you are on to read them.
+**To the site you are scanning.** QuickAudit makes one request to the page you are already
+viewing in order to read its response headers. It is sent with your existing cookies so the
+result reflects the page as you actually see it.
 
 **Active file-exposure checking (QA-09), disabled by default.** If you explicitly enable it and
 acknowledge that you are authorised to test the target, QuickAudit sends up to about 14 `GET`

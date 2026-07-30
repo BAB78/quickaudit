@@ -168,9 +168,14 @@ tools/cli.mjs  same checks, run from Node against any URL
 test/          unit tests over fixtures + a local fixture server + the real-site harness
 ```
 
-`PageContext` is the seam. The extension builds one from `chrome.cookies` + `webRequest` +
-content-script collection; the Node CLI builds one from `fetch`. The ten checks can't tell the
-difference, which is what makes Phase 3 (20 real sites) and CI both possible.
+`PageContext` is the seam. The extension builds one from the cookie store, a credentialed
+`fetch` for response headers, and two injected collectors; the Node CLI builds one from `fetch`
+alone. The ten checks can't tell the difference, which is what makes Phase 3 (20 real sites)
+and CI both possible.
+
+Note the extension deliberately does **not** use `webRequest`, which would give the exact bytes
+of the original navigation. Chrome only delivers those events to extensions holding host
+permissions at install time, and that is incompatible with §6's per-origin model.
 
 ## 6. Permissions & privacy
 

@@ -5,7 +5,7 @@
  * Runs as a service worker on Chromium/Safari and as an event page on Firefox. Both are
  * non-persistent, so nothing here may rely on module state surviving between messages.
  */
-import { api, can, engine, storage } from './browser-api.js';
+import { api, can, storage } from './browser-api.js';
 import { runAll } from '../checks/index.js';
 import { normalizeHeaders, getAll } from '../core/headers.js';
 import { parseSetCookies, mergeCookies } from '../core/cookies.js';
@@ -14,29 +14,17 @@ import { extensionStorageCache } from '../core/osv.js';
 import { PROBE_BODY_LIMIT } from '../core/types.js';
 
 /**
- * Response headers of the last main-frame load, per tab. Observing the real navigation is
- * more faithful than re-fetching, because some origins vary headers by request — and because
- * a re-fetch can trip a WAF challenge the original navigation had already passed.
+ * Headers are read with a credentialed fetch rather than by observing the navigation.
  *
- * This cache is best-effort by design: the worker can be torn down at any time, and Safari
- * may not deliver webRequest events at all. scanTab() falls back to a fetch when it's empty.
+ * The webRequest API would give the exact bytes of the original response, but Chrome only
+ * delivers those events to extensions holding host permissions *at install time* — and
+ * QuickAudit deliberately asks for one origin at a time, when you click Scan. Requesting
+ * access to every site up front to gain slightly more faithful headers is a bad trade for a
+ * tool whose selling point is that it doesn't do that. Chrome also logs a permanent error
+ * badge for any extension that registers a webRequest listener it can never receive.
+ *
+ * The fetch below sends the page's own cookies, so it still sees the authenticated response.
  */
-const headerCache = new Map();
-
-if (can.webRequest) {
-  try {
-    api.webRequest.onHeadersReceived.addListener(
-      (d) => { headerCache.set(d.tabId, { url: d.url, headers: d.responseHeaders || [], at: Date.now() }); },
-      { urls: ['http://*/*', 'https://*/*'], types: ['main_frame'] },
-      // Firefox rejects 'extraHeaders'; Chromium needs it to see Set-Cookie.
-      engine === 'chromium' ? ['responseHeaders', 'extraHeaders'] : ['responseHeaders']
-    );
-    api.tabs.onRemoved.addListener((tabId) => headerCache.delete(tabId));
-  } catch {
-    // No host permissions yet, or the engine restricts webRequest. The fetch path covers it.
-  }
-}
-
 api.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   if (msg?.type === 'scan') {
     scanTab(msg.tabId).then(sendResponse).catch((e) => sendResponse({ error: e.message }));
@@ -68,22 +56,14 @@ async function scanTab(tabId) {
   const notes = [];
 
   // ── headers ────────────────────────────────────────────────────────────────
-  let headers;
-  const cached = headerCache.get(tabId);
-  if (cached && sameOrigin(cached.url, url)) {
-    headers = normalizeHeaders(cached.headers);
-  } else {
-    // Re-fetch with the page's own credentials so we see the authenticated response.
-    try {
-      const res = await fetch(url, { credentials: 'include', cache: 'reload', redirect: 'follow' });
-      headers = normalizeHeaders(res.headers);
-      notes.push(can.webRequest
-        ? 'Headers came from a fresh request, not the original page load. Reload the page and rescan for exact navigation headers.'
-        : 'This browser does not expose navigation headers to extensions, so headers came from a fresh request.');
-    } catch (e) {
-      headers = {};
-      notes.push(`Could not read response headers: ${e.message}`);
-    }
+  // Credentialed so we see the response a logged-in user actually gets.
+  let headers = {};
+  try {
+    const res = await fetch(url, { credentials: 'include', cache: 'reload', redirect: 'follow' });
+    headers = normalizeHeaders(res.headers);
+    notes.push('Headers were read from a fresh request to this URL, not from the original page load. A site that varies headers per request may differ slightly.');
+  } catch (e) {
+    notes.push(`Could not read response headers: ${e.message}`);
   }
 
   // ── cookies ────────────────────────────────────────────────────────────────
@@ -138,10 +118,6 @@ async function scanTab(tabId) {
   });
   await storage.set({ lastReport: report });
   return report;
-}
-
-function sameOrigin(a, b) {
-  try { return new URL(a).origin === new URL(b).origin; } catch { return false; }
 }
 
 /**

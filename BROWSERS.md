@@ -39,8 +39,13 @@ handler, so it can never be proxied through the background. The prompt is raised
 the popup's click handler, which is also the more correct pattern on Chromium. Enforced by a
 compat test.
 
-**`extraHeaders`.** Chromium needs it on the `webRequest` listener to observe `Set-Cookie`;
-Firefox rejects the value outright. Selected per engine.
+**No `webRequest`, on any engine.** Chrome only delivers `webRequest` events to extensions
+holding host permissions *at install time*, which is fundamentally incompatible with asking
+per-origin at scan time — the listener registers, never fires, and Chrome records a permanent
+error badge in every user's extensions page. Found by attaching to the live service worker,
+which logged it verbatim: *"You need to request host permissions in the manifest file in order
+to be notified about requests from the webRequest API."* Response headers now come from a
+credentialed `fetch`, which keeps the per-origin permission model intact.
 
 **Downloads.** Safari has no `downloads` API. The Safari manifest doesn't request the
 permission, and report export falls back to a synthesized `<a download>` click, which works
