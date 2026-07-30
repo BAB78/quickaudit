@@ -21,10 +21,14 @@ export function buildHtmlReport(report) {
 <html lang="en"><head><meta charset="utf-8">
 <title>QuickAudit — ${esc(hostOf(report.url))}</title>
 <style>
-  :root{--fg:#16181d;--muted:#6b7280;--line:#e5e7eb;--surface:#f7f8fa}
+  :root{--fg:#16181d;--muted:#6b7280;--line:#e5e7eb;--surface:#f7f8fa;color-scheme:light}
   *{box-sizing:border-box}
+  /* This is a document to hand to someone, and it prints. It commits to a light page rather
+     than following the reader's theme — without an explicit background it renders dark text
+     on a dark canvas for anyone whose browser is in dark mode. */
+  html{background:#fff}
   body{font:14px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;color:var(--fg);
-       max-width:820px;margin:0 auto;padding:40px 24px}
+       background:#fff;max-width:820px;margin:0 auto;padding:40px 24px}
   h1{font-size:22px;margin:0 0 4px}
   .target{color:var(--muted);word-break:break-all;margin:0 0 20px}
   .summary{display:flex;gap:20px;align-items:center;padding:16px;background:var(--surface);
