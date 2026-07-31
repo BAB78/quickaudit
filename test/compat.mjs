@@ -149,6 +149,17 @@ t('permissions.request is raised from the popup, never the background', () => {
   assert.ok(/requestOrigin\(/.test(popup), 'popup must request the origin itself');
 });
 
+t('nothing in the shipped source evaluates code at runtime', () => {
+  // Store reviewers treat any dynamic code path in a security extension as a red flag, and
+  // QuickAudit has no need for one — library probes walk property paths instead.
+  for (const f of extFiles) {
+    const code = stripStrings(codeOf(f));
+    for (const pattern of [/\bnew Function\b/, /\beval\s*\(/, /setTimeout\s*\(\s*['"`]/, /\bnew\s+AsyncFunction\b/]) {
+      assert.ok(!pattern.test(code), `${path.relative(root, f)} contains dynamic code execution (${pattern})`);
+    }
+  }
+});
+
 t('no DOM or window access in code the background loads', () => {
   // Service workers have no document. The injected collectors do use it, but they are
   // serialized into the page rather than executed here — so split before stripping comments.

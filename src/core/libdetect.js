@@ -9,33 +9,45 @@
  * Names map to npm package names because that is the ecosystem OSV indexes these in.
  */
 
-/** Globals the content script reads. Kept as strings so the collector can eval them safely. */
+/**
+ * Globals the injected collector reads, expressed as **property paths rather than code**.
+ *
+ * These were once expression strings evaluated with `new Function()`. That is dynamic code
+ * execution inside a security extension — the thing store reviewers are most likely to stop
+ * on, and entirely avoidable: walking a path array does the same job with no evaluator.
+ *
+ *   path     properties to walk from the page's global object
+ *   excludes if this path resolves, skip (disambiguates libraries sharing a global)
+ *   requires this path must resolve for the probe to count
+ *   format   post-processing for libraries that don't expose a plain semver string
+ */
 export const GLOBAL_PROBES = [
-  { pkg: 'jquery', expr: 'window.jQuery && window.jQuery.fn && window.jQuery.fn.jquery' },
-  // jQuery UI hangs off jQuery rather than window, and ships its own advisories.
-  { pkg: 'jquery-ui', expr: 'window.jQuery && window.jQuery.ui && window.jQuery.ui.version' },
-  { pkg: 'angular', expr: 'window.angular && window.angular.version && window.angular.version.full' },
-  { pkg: 'react', expr: 'window.React && window.React.version' },
-  { pkg: 'react-dom', expr: 'window.ReactDOM && window.ReactDOM.version' },
-  { pkg: 'vue', expr: 'window.Vue && window.Vue.version' },
-  { pkg: 'lodash', expr: 'window._ && window._.VERSION' },
-  { pkg: 'underscore', expr: 'window._ && !window._.chunk && window._.VERSION' },
-  { pkg: 'moment', expr: 'window.moment && window.moment.version' },
-  { pkg: 'bootstrap', expr: 'window.bootstrap && window.bootstrap.Tooltip && window.bootstrap.Tooltip.VERSION' },
-  { pkg: 'd3', expr: 'window.d3 && window.d3.version' },
-  { pkg: 'handlebars', expr: 'window.Handlebars && window.Handlebars.VERSION' },
-  { pkg: 'dompurify', expr: 'window.DOMPurify && window.DOMPurify.version' },
-  { pkg: 'axios', expr: 'window.axios && window.axios.VERSION' },
-  { pkg: 'core-js', expr: 'window.core && window.core.version' },
-  { pkg: 'backbone', expr: 'window.Backbone && window.Backbone.VERSION' },
-  { pkg: 'knockout', expr: 'window.ko && window.ko.version' },
-  { pkg: 'ember-source', expr: 'window.Ember && window.Ember.VERSION' },
-  { pkg: 'video.js', expr: 'window.videojs && window.videojs.VERSION' },
-  { pkg: 'chart.js', expr: 'window.Chart && (window.Chart.version || (window.Chart.defaults && window.Chart.defaults.global && "2.x"))' },
-  { pkg: 'select2', expr: 'window.jQuery && window.jQuery.fn && window.jQuery.fn.select2 && window.jQuery.fn.select2.amd && "detected"' },
-  { pkg: 'three', expr: 'window.THREE && window.THREE.REVISION && ("0." + window.THREE.REVISION + ".0")' },
-  { pkg: 'swiper', expr: 'window.Swiper && window.Swiper.version' },
-  { pkg: 'marked', expr: 'window.marked && window.marked.defaults && window.marked.version' },
+  { pkg: 'jquery', path: ['jQuery', 'fn', 'jquery'] },
+  // jQuery UI hangs off jQuery rather than the global, and ships its own advisories.
+  { pkg: 'jquery-ui', path: ['jQuery', 'ui', 'version'] },
+  { pkg: 'angular', path: ['angular', 'version', 'full'] },
+  { pkg: 'react', path: ['React', 'version'] },
+  { pkg: 'react-dom', path: ['ReactDOM', 'version'] },
+  { pkg: 'vue', path: ['Vue', 'version'] },
+  // lodash and underscore both claim `_`; only lodash has chunk().
+  { pkg: 'lodash', path: ['_', 'VERSION'], requires: ['_', 'chunk'] },
+  { pkg: 'underscore', path: ['_', 'VERSION'], excludes: ['_', 'chunk'] },
+  { pkg: 'moment', path: ['moment', 'version'] },
+  { pkg: 'bootstrap', path: ['bootstrap', 'Tooltip', 'VERSION'] },
+  { pkg: 'd3', path: ['d3', 'version'] },
+  { pkg: 'handlebars', path: ['Handlebars', 'VERSION'] },
+  { pkg: 'dompurify', path: ['DOMPurify', 'version'] },
+  { pkg: 'axios', path: ['axios', 'VERSION'] },
+  { pkg: 'core-js', path: ['core', 'version'] },
+  { pkg: 'backbone', path: ['Backbone', 'VERSION'] },
+  { pkg: 'knockout', path: ['ko', 'version'] },
+  { pkg: 'ember-source', path: ['Ember', 'VERSION'] },
+  { pkg: 'video.js', path: ['videojs', 'VERSION'] },
+  { pkg: 'chart.js', path: ['Chart', 'version'] },
+  // three.js exposes an integer revision, not a semver.
+  { pkg: 'three', path: ['THREE', 'REVISION'], format: 'revision' },
+  { pkg: 'swiper', path: ['Swiper', 'version'] },
+  { pkg: 'marked', path: ['marked', 'version'] },
 ];
 
 const SEMVERISH = '(\\d+\\.\\d+(?:\\.\\d+)?(?:-[0-9A-Za-z.-]+)?)';

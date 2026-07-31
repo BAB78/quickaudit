@@ -86,7 +86,7 @@ async function scanTab(tabId) {
 
   // ── page-side collection ───────────────────────────────────────────────────
   const dom = await exec(tabId, 'ISOLATED', collectDom);
-  const globals = await exec(tabId, 'MAIN', collectGlobals, [GLOBAL_PROBES.map((g) => [g.pkg, g.expr])]);
+  const globals = await exec(tabId, 'MAIN', collectGlobals, [GLOBAL_PROBES]);
 
   const resources = dom?.resources || [];
   const libraries = mergeLibraries([
@@ -193,17 +193,45 @@ function collectDom() {
   return { metaCsp, resources: resources.slice(0, 400) };
 }
 
+/**
+ * Read library versions off the page's globals by walking property paths.
+ *
+ * Deliberately contains no evaluator — no eval, no `new Function`, no string that becomes
+ * code. A security extension that ships a dynamic code path invites exactly the review it
+ * does not need, and reading a property path does the same job.
+ */
 function collectGlobals(probes) {
-  const out = [];
-  for (const [pkg, expr] of probes) {
-    try {
-      // eslint-disable-next-line no-new-func
-      const v = new Function(`return (${expr});`)();
-      if (typeof v === 'string' && /^\d+\.\d+/.test(v)) {
-        const parts = v.match(/^\d+\.\d+(?:\.\d+)?/)[0].split('.');
-        while (parts.length < 3) parts.push('0');
-        out.push({ name: pkg, version: parts.join('.'), source: 'global', evidence: `window global → ${v}` });
+  const read = (path) => {
+    let node = globalThis;
+    for (const key of path) {
+      if (node == null) return undefined;
+      try {
+        node = node[key];
+      } catch {
+        return undefined; // a getter that throws is not a version we can read
       }
+    }
+    return node;
+  };
+
+  const out = [];
+  for (const probe of probes) {
+    try {
+      if (probe.excludes && read(probe.excludes) !== undefined) continue;
+      if (probe.requires && read(probe.requires) === undefined) continue;
+
+      let value = read(probe.path);
+      if (probe.format === 'revision' && typeof value === 'number') value = `0.${value}.0`;
+      if (typeof value !== 'string' || !/^\d+\.\d+/.test(value)) continue;
+
+      const parts = value.match(/^\d+\.\d+(?:\.\d+)?/)[0].split('.');
+      while (parts.length < 3) parts.push('0');
+      out.push({
+        name: probe.pkg,
+        version: parts.join('.'),
+        source: 'global',
+        evidence: `${probe.path.join('.')} = ${value}`,
+      });
     } catch { /* a global that throws on access is not a library we can version */ }
   }
   return out;
