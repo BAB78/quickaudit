@@ -123,3 +123,45 @@ for (const size of [16, 32, 48, 128]) {
   writeFileSync(new URL(`icon${size}.png`, OUT), buf);
   console.log(`icons/icon${size}.png  ${buf.length} bytes  sha256:${createHash('sha256').update(buf).digest('hex').slice(0, 12)}`);
 }
+
+// ── store icon ────────────────────────────────────────────────────────────────
+/**
+ * The Chrome Web Store renders the icon on a light card, so a transparent glyph looks
+ * unfinished there. This variant is opaque: white shield on the brand blue, with padding
+ * so it reads at small sizes in the store grid.
+ */
+function renderStore(size) {
+  const px = new Uint8Array(size * size * 4);
+  const SS = 3;
+  const PAD = 0.12; // shrink the glyph so it doesn't touch the tile edge
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      let shield = 0, check = 0;
+      for (let sy = 0; sy < SS; sy++) {
+        for (let sx = 0; sx < SS; sx++) {
+          const u = ((x + (sx + 0.5) / SS) / size - PAD) / (1 - 2 * PAD);
+          const v = ((y + (sy + 0.5) / SS) / size - PAD) / (1 - 2 * PAD);
+          if (u < 0 || u > 1 || v < 0 || v > 1) continue;
+          if (inShield(u, v)) { shield++; if (inCheck(u, v)) check++; }
+        }
+      }
+      const n = SS * SS;
+      const a = shield / n;
+      const c = check / n;
+      const i = (y * size + x) * 4;
+      // Composite over an opaque near-white tile: blue shield, white tick.
+      const bg = [247, 248, 250];
+      for (let k = 0; k < 3; k++) {
+        const glyph = BLUE[k] * (1 - c / Math.max(a, 1e-6)) + WHITE[k] * (c / Math.max(a, 1e-6));
+        px[i + k] = Math.round(bg[k] * (1 - a) + glyph * a);
+      }
+      px[i + 3] = 255; // fully opaque
+    }
+  }
+  return px;
+}
+
+mkdirSync(new URL('../store-assets/', import.meta.url), { recursive: true });
+const storeBuf = png(128, 128, renderStore(128));
+writeFileSync(new URL('../store-assets/store-icon-128.png', import.meta.url), storeBuf);
+console.log(`store-assets/store-icon-128.png  ${storeBuf.length} bytes  (opaque)`);
