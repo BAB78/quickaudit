@@ -6,7 +6,8 @@ stores; the per-store notes at the bottom cover what differs.
 | Store | Package | Fee | Notes |
 |---|---|---|---|
 | Chrome Web Store | `quickaudit-1.0.0-chrome.zip` | $5 one-time | Reaches Chrome; Brave/Opera/Vivaldi users install from here too |
-| Microsoft Edge Add-ons | `quickaudit-1.0.0-chrome.zip` | **free** | Same package, no code changes |
+| Microsoft Edge Add-ons | `quickaudit-1.0.0-chrome.zip` | **free** | Same package, no code changes. Register as an **Individual**, not a Company |
+| Opera Add-ons | `quickaudit-1.0.0-chrome.zip` | **free** | Same package again. Lowest priority — Opera can install from the Chrome Web Store directly |
 | addons.mozilla.org | `quickaudit-1.0.0-firefox.zip` | **free** | Review is faster now that no `webRequest` permission is requested |
 | Apple App Store | `quickaudit-1.0.0-safari.zip` | **already paid** | Existing BAB Studios membership covers it; needs macOS + Xcode; unverified — see BROWSERS.md |
 
@@ -180,6 +181,19 @@ originally planned. Two things AMO reviewers still want:
 AMO also enforces the extension id (`quickaudit@babstudios.dev`) declared in
 `browser_specific_settings` — it must stay stable across versions or you lose the listing's
 update path.
+
+**Opera Add-ons** (https://addons.opera.com/developer/) — free, takes the Chromium zip
+unmodified. Two things to know before spending time on it:
+
+- **Opera users can already install from the Chrome Web Store**, so the marginal reach is
+  small. Do this last, if at all.
+- **Opera's manifest validator is stricter and lags Chrome's.** Developers have hit rejections
+  for MV3 keys Chrome accepts. QuickAudit should pass — it declares no `content_scripts` and
+  reaches the main world through `scripting.executeScript` at runtime rather than a manifest
+  key — but `optional_host_permissions` is newer, and if anything gets rejected there, that is
+  the first thing to look at. Opera's own
+  [acceptance criteria](https://help.opera.com/en/extensions/acceptance-criteria/) are worth
+  a read first.
 
 **Apple App Store** — needs macOS, Xcode, and a $99/year membership. Deferred; see
 [BROWSERS.md](BROWSERS.md).

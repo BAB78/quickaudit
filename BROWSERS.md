@@ -13,7 +13,8 @@ node tools/build.mjs firefox   # or just one
 |---|---|---|---|
 | Chrome 116+ | `chrome` | Full | Chrome Web Store |
 | Edge 116+ | `chrome` | Full | Microsoft Edge Add-ons |
-| Brave, Opera, Vivaldi | `chrome` | Full | Chrome Web Store (or sideload) |
+| Opera 102+ | `chrome` | Full | Opera Add-ons |
+| Brave, Vivaldi | `chrome` | Full | Chrome Web Store (or sideload) |
 | Firefox 128+ | `firefox` | Full | addons.mozilla.org |
 | Safari 17+ (macOS) | `safari` | Code-complete, **unverified** — see below | App Store, via Xcode |
 

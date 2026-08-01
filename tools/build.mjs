@@ -18,10 +18,16 @@ const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const base = JSON.parse(readFileSync(path.join(root, 'manifest.base.json'), 'utf8'));
 
 export const TARGETS = {
-  /** Chrome, Edge, Brave, Opera, Vivaldi — one identical package. */
+  /**
+   * Chrome, Edge, Opera, Brave, Vivaldi — one identical package.
+   *
+   * Deliberately not split per store. Edge and Opera are Chromium and accept this zip
+   * unmodified, so separate targets would emit byte-identical files and invite the two to
+   * drift apart for no reason.
+   */
   chrome: {
-    label: 'Chromium (Chrome, Edge, Brave, Opera, Vivaldi)',
-    stores: ['Chrome Web Store', 'Microsoft Edge Add-ons'],
+    label: 'Chromium (Chrome, Edge, Opera, Brave, Vivaldi)',
+    stores: ['Chrome Web Store', 'Microsoft Edge Add-ons', 'Opera Add-ons'],
     manifest: {
       minimum_chrome_version: '116',
       background: { service_worker: 'src/ext/background.js', type: 'module' },
