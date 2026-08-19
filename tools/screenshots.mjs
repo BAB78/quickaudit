@@ -126,6 +126,38 @@ const server = http.createServer((req, res) => {
     return res.end(frame(n, inner, n === 4 || n === 5));
   }
 
+
+  if (p === '/cover') {
+    // dev.to cover image: 1000x420. Leads with the number the post is about.
+    res.writeHead(200, { 'content-type': 'text/html' });
+    return res.end(`<!doctype html><html><head><meta charset="utf-8"><style>
+      *{box-sizing:border-box;margin:0;padding:0}
+      html,body{width:1000px;height:420px;overflow:hidden;
+        font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+      body{display:flex;align-items:center;gap:44px;padding:0 60px;
+        background:linear-gradient(135deg,#0b1220 0%,#131c2e 55%,#0d1526 100%);color:#e6e8eb}
+      .copy{flex:1}
+      .mark{display:flex;align-items:center;gap:9px;margin-bottom:20px;
+        font-weight:650;font-size:14px;color:#6ea8fe;letter-spacing:-.01em}
+      h1{font-size:40px;line-height:1.1;letter-spacing:-.025em;font-weight:700}
+      h1 em{font-style:normal;color:#ff7b72}
+      p{margin-top:16px;font-size:16px;color:#98a2b3}
+      .shell{border-radius:12px;overflow:hidden;flex:none;
+        box-shadow:0 24px 60px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.08)}
+      iframe{display:block;border:0;background:#16181d}
+    </style></head><body>
+      <div class="copy">
+        <div class="mark">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m8.5 12 2.5 2.5 5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          QuickAudit
+        </div>
+        <h1>111 passing tests.<br><em>Zero</em> of the real bugs.</h1>
+        <p>Six defects, each found by a different kind of looking.</p>
+      </div>
+      <div class="shell"><iframe src="/ext/popup.html?r=failing" width="400" height="352"></iframe></div>
+    </body></html>`);
+  }
+
   if (p === '/report') {
     const r = reports[url.searchParams.get('r')] || Object.values(reports)[0];
     res.writeHead(200, { 'content-type': 'text/html' });
