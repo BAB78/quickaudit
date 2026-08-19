@@ -46,7 +46,11 @@ export const TARGETS = {
       background: { scripts: ['src/ext/background.js'], type: 'module' },
       permissions: [...base.permissions, 'downloads'],
       browser_specific_settings: {
-        gecko: { id: 'quickaudit@babstudios.dev', strict_min_version: '128.0' },
+        gecko: {
+          id: 'quickaudit@babstudios.dev',
+          strict_min_version: '128.0',
+          data_collection_permissions: { required: ['none'] },
+        },
       },
     },
   },
