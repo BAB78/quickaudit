@@ -1,0 +1,55 @@
+name: 'QuickAudit'
+description: 'Ten-point web security checklist for a deployed URL. Fails the build when a security header regresses, and comments the findings on the pull request.'
+author: 'BAB Studios'
+
+branding:
+  icon: 'shield'
+  color: 'blue'
+
+inputs:
+  url:
+    description: 'URL to audit. Accepts several, separated by commas or newlines.'
+    required: true
+  fail-on:
+    description: 'Lowest severity that fails the build: critical, high, medium, low, or never.'
+    required: false
+    default: 'high'
+  warnings-as-errors:
+    description: 'Treat warnings at or above the fail-on severity as build failures.'
+    required: false
+    default: 'false'
+  checks:
+    description: 'Comma-separated check ids to run (QA-01 … QA-10). Defaults to all ten.'
+    required: false
+  active:
+    description: >-
+      Enable QA-09, which probes for exposed files such as /.env and /.git/HEAD. This sends
+      GET requests to the target origin, so only enable it for hosts you own or are
+      authorised to test. Off by default.
+    required: false
+    default: 'false'
+  timeout:
+    description: 'Per-request timeout in milliseconds.'
+    required: false
+    default: '20000'
+  comment:
+    description: 'Post the findings as a pull request comment, updating the same comment each run.'
+    required: false
+    default: 'false'
+  github-token:
+    description: 'Token used to post the pull request comment. Usually ${{ github.token }}.'
+    required: false
+
+outputs:
+  score:
+    description: 'Score out of 100 for the worst-scoring URL audited.'
+  failed:
+    description: 'Number of findings at or above the fail-on severity.'
+  passed:
+    description: 'true when nothing met the fail-on threshold.'
+  report-json:
+    description: 'Full report for every URL, as JSON.'
+
+runs:
+  using: 'node20'
+  main: 'ci/action.mjs'

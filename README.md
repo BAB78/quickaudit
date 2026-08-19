@@ -139,3 +139,31 @@ candidate and each needs its own false-positive validation before it ships.
 ## Licence
 
 MIT. See [LICENSE](LICENSE).
+
+## QuickAudit for CI
+
+The same ten checks, as a GitHub Action. Runs against a deployed URL on every pull request
+and fails the build when a security header regresses.
+
+```yaml
+- uses: BAB78/quickaudit@v1
+  with:
+    url: https://staging.example.com
+    fail-on: high          # critical | high | medium | low | never
+    comment: true          # post findings on the PR, updating one comment
+    github-token: ${{ github.token }}
+```
+
+It writes a job summary with the score, every finding and its remediation; emits workflow
+annotations; and exposes `score`, `failed`, `passed` and `report-json` as step outputs. Full
+options and other shapes: [examples/quickaudit.yml](examples/quickaudit.yml).
+
+Two behaviours worth knowing before you put it in front of a deploy:
+
+- **An unreachable site fails the job.** CI that goes green because the deploy was down is
+  worse than no CI at all.
+- **A check that errors fails the build**, even at `fail-on: never`. A broken scan must never
+  read as a clean site.
+
+The Action needs no bundler and ships no `dist/`. QuickAudit has zero dependencies, so the
+source in this repository is exactly the code that runs.

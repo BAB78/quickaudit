@@ -1,0 +1,74 @@
+# Copy this into .github/workflows/ in your own repository.
+#
+# Runs QuickAudit's ten security checks against a deployed URL on every pull request and
+# fails the build if a high-severity misconfiguration appears. Catches the case where a
+# change quietly drops your CSP or downgrades HSTS, before it reaches production.
+
+name: Security checklist
+
+on:
+  pull_request:
+  push:
+    branches: [main, master]
+  schedule:
+    # Configuration drifts without anyone touching the repo — a CDN setting changes, a
+    # dependency ships a new bundle. A weekly run catches that; pull requests alone don't.
+    - cron: '0 7 * * 1'
+
+permissions:
+  contents: read
+  pull-requests: write   # only needed for `comment: true`
+
+jobs:
+  quickaudit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: BAB78/quickaudit@v1
+        with:
+          url: https://staging.example.com
+
+          # Lowest severity that fails the build.
+          # critical | high | medium | low | never
+          fail-on: high
+
+          # Post the findings on the pull request, updating the same comment each run.
+          comment: true
+          github-token: ${{ github.token }}
+
+---
+# Other shapes worth knowing about.
+
+# 1. Audit several environments in one job.
+#    - uses: BAB78/quickaudit@v1
+#      with:
+#        url: |
+#          https://staging.example.com
+#          https://staging-admin.example.com
+
+# 2. Report without blocking, while you clean up an existing backlog.
+#    - uses: BAB78/quickaudit@v1
+#      with:
+#        url: https://example.com
+#        fail-on: never
+
+# 3. Run a subset — for example headers only, skipping the library and file checks.
+#    - uses: BAB78/quickaudit@v1
+#      with:
+#        url: https://example.com
+#        checks: QA-01,QA-02,QA-03,QA-04,QA-05,QA-10
+
+# 4. Include the exposed-file probe. ONLY on infrastructure you own: this sends GET
+#    requests for paths such as /.env and /.git/HEAD to the target origin.
+#    - uses: BAB78/quickaudit@v1
+#      with:
+#        url: https://staging.example.com
+#        active: true
+
+# 5. Branch on the result in a later step.
+#    - uses: BAB78/quickaudit@v1
+#      id: audit
+#      with:
+#        url: https://example.com
+#        fail-on: never
+#    - if: steps.audit.outputs.passed == 'false'
+#      run: echo "Score was ${{ steps.audit.outputs.score }}"

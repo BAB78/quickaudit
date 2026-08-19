@@ -1,0 +1,59 @@
+# QuickAudit's own CI: the full test suite, plus a self-test that runs the Action the way a
+# consumer would. The self-test is the one that matters — unit tests can pass while the
+# packaged Action is broken, which is exactly the class of bug this project keeps finding.
+
+name: tests
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Unit, compat and licence tests
+        run: node test/run-tests.mjs
+
+      - name: Cross-browser manifest and portability tests
+        run: node test/compat.mjs
+
+      - name: Integration tests against the local fixture servers
+        run: node test/integration.mjs
+
+      - name: Extension wiring, under both API namespaces
+        run: node test/ext-smoke.mjs
+
+      - name: CI policy tests
+        run: node test/ci.mjs
+
+      - name: Action end-to-end tests
+        run: node test/ci-integration.mjs
+
+  # Run the Action against a site we do not control, to prove the packaged entry point works
+  # outside the fixture environment. Passive checks only, and fail-on: never so a third
+  # party's configuration can never break our build.
+  self-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit example.com with the Action itself
+        uses: ./
+        id: audit
+        with:
+          url: https://example.com
+          fail-on: never
+
+      - name: The Action must have produced a score
+        run: |
+          echo "score=${{ steps.audit.outputs.score }}"
+          test -n "${{ steps.audit.outputs.score }}"

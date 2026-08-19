@@ -63,13 +63,15 @@ async function main() {
   }
   for (const n of report.notes) console.log(`${C.grey}note: ${n}${C.reset}`);
 
-  process.exit(counts.fail > 0 ? 1 : 0);
+  // exitCode rather than exit(): calling exit() while HTTP sockets are still closing trips
+  // a libuv assertion on Windows and returns a garbage status.
+  process.exitCode = counts.fail > 0 ? 1 : 0;
 }
 
 if (import.meta.url === `file://${process.argv[1].replace(/\\/g, '/')}` ||
     process.argv[1]?.endsWith('cli.mjs')) {
   main().catch((e) => {
     console.error(`${C.red}scan failed:${C.reset} ${e.message}`);
-    process.exit(2);
+    process.exitCode = 2;
   });
 }
