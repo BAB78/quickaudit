@@ -36,7 +36,7 @@ This one does three things instead:
 
 Evidence snippets are also redacted (`KEY=[redacted]`), so a screenshot of a finding doesn't leak the secret it found.
 
-That check is **off by default**, behind an explicit acknowledgement that you own or are authorised to test the target. It's capped at ~14 fixed paths on the origin of the tab you already have open, rate-limited, no crawler, no wordlist input, and there is no way to point it at a host you aren't on. It exists so you can check your own deploy.
+That check is **off by default**, behind an explicit acknowledgement that you own or are authorised to test the target. It's capped at 13 fixed paths (plus one calibration request) on the origin of the tab you already have open, rate-limited, no crawler, no wordlist input, and there is no way to point it at a host you aren't on. It exists so you can check your own deploy.
 
 ### Library CVEs come from OSV.dev, not a bundled list
 
@@ -94,6 +94,6 @@ Happy to have any of the ten checks torn apart — that's most of why I'm postin
 
 **"Isn't the `.env` probing irresponsible?"**
 
-> It's off by default, gated behind an authorisation acknowledgement, capped at ~14 fixed paths on the origin you already have open, rate-limited, and has no crawler or wordlist input. It sends the same requests you'd send by hand while checking your own deploy. If you think the gate is insufficient I'd genuinely like to hear what would satisfy you — that's the part I'm least certain about.
+> It's off by default, gated behind an authorisation acknowledgement, capped at 13 fixed paths plus one calibration request, on the origin you already have open, rate-limited, and has no crawler or wordlist input. It sends the same requests you'd send by hand while checking your own deploy. If you think the gate is insufficient I'd genuinely like to hear what would satisfy you — that's the part I'm least certain about.
 
 **If someone reports a false positive:** thank them, ask for the URL and the check ID, and fix it. A false positive in public is worth more than a quiet one, and fixing it fast in the thread is the best possible advertisement for the tool.
