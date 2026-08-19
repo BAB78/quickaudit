@@ -25,7 +25,7 @@ in a thumbnail reads as a real demonstration rather than a pitch.
 
 Aim for 3:30. Timings are guides, not marks to hit.
 
-### 0:00 to 0:15 — Cold open, no intro
+### 0:00 to 0:15  Cold open, no intro
 
 Do not say hello. Do not say who you are. Show the result first.
 
@@ -37,7 +37,7 @@ Say, over the top:
 > "That's Wikipedia. Three security problems, found in about a fifth of a second, in one click.
 > Let me show you what it actually checked."
 
-### 0:15 to 0:45 — What it is
+### 0:15 to 0:45  What it is
 
 > "This is QuickAudit. It's a free browser extension I built. It runs ten security checks
 > against whatever page you're on, the ones you'd otherwise do by hand with curl and DevTools
@@ -48,7 +48,7 @@ Scroll the popup slowly while talking. Let the viewer read.
 > "It is not a scanner. No payloads, nothing intrusive. It's the checklist you run first so a
 > real assessment isn't full of trivia."
 
-### 0:45 to 1:45 — Walk two findings
+### 0:45 to 1:45  Walk two findings
 
 Expand **QA-02 Content-Security-Policy**.
 
@@ -63,7 +63,7 @@ Expand **QA-03 Clickjacking**.
 > "Same again. No framing protection, so any site could load this page in an invisible iframe.
 > Every finding cites the header that caused it and the specific fix."
 
-### 1:45 to 2:30 — The one that sells it
+### 1:45 to 2:30  The one that sells it
 
 Navigate to **python.org**. Scan. Expand **QA-08**.
 
@@ -76,7 +76,7 @@ Point at the CVE list.
 > "Five advisories. Real CVE numbers. And it tells me it's fixed in 1.9.0. That's live data,
 > not a list I hardcoded that goes stale the week I ship it."
 
-### 2:30 to 3:00 — Contrast
+### 2:30 to 3:00  Contrast
 
 Navigate to **github.com**. Scan.
 
@@ -84,7 +84,7 @@ Navigate to **github.com**. Scan.
 > properly it says so, because a tool that finds problems everywhere is a tool you stop
 > trusting."
 
-### 3:00 to 3:30 — Privacy and close
+### 3:00 to 3:30  Privacy and close
 
 Open Settings, scroll to the privacy section.
 
