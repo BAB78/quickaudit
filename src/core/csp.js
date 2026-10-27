@@ -1,4 +1,4 @@
-/** Minimal CSP parser — enough to answer "is this policy actually doing anything?" */
+/** Minimal CSP parser: enough to answer "is this policy actually doing anything?" */
 
 /**
  * Parse a CSP header value into {directive: [sources]}.

@@ -4,7 +4,7 @@ A one-click OWASP-style security checklist for the page in your browser tab. Ten
 pass/fail, in about a fifth of a second.
 
 Runs on **Chrome, Edge, Brave, Opera, Vivaldi, and Firefox** from one source tree. A Safari
-build exists but is unverified — see [BROWSERS.md](BROWSERS.md).
+build exists but is unverified: see [BROWSERS.md](BROWSERS.md).
 
 Not a scanner. No payloads, no crawling, no exploitation. It's the checklist you run *first*
 so a real assessment isn't full of trivia.
@@ -15,7 +15,7 @@ Score 49/100  ·  3 fail 4 warn 2 pass 1 skip
 
 FAIL QA-02 Content-Security-Policy [high]
      No Content-Security-Policy.
-     Any injected script — stored XSS, a compromised third-party tag, a malicious ad — runs unrestricted.
+     Any injected script (stored XSS, a compromised third-party tag, a malicious ad) runs unrestricted.
      Fix: default-src 'self'; object-src 'none'; base-uri 'self'; and serve scripts with a per-request nonce.
 ```
 
@@ -31,7 +31,7 @@ FAIL QA-02 Content-Security-Policy [high]
 | QA-06 | Cookie security flags | high | no |
 | QA-07 | Mixed content | medium | no |
 | QA-08 | JS libraries with known CVEs (OSV.dev) | critical | lookup only |
-| QA-09 | Exposed sensitive files | critical | **yes — off by default** |
+| QA-09 | Exposed sensitive files | critical | **yes: off by default** |
 | QA-10 | Server version disclosure | low | no |
 
 Full definitions and rationale: [PRD.md](PRD.md).
@@ -44,13 +44,13 @@ node tools/make-icons.mjs   # generates icons/
 node tools/build.mjs        # generates build/{chrome,firefox,safari}/
 ```
 
-- **Chrome / Edge / Brave / Opera / Vivaldi** — `chrome://extensions` → Developer mode →
+- **Chrome / Edge / Brave / Opera / Vivaldi**: `chrome://extensions` → Developer mode →
   **Load unpacked** → select `build/chrome`
-- **Firefox** — `about:debugging#/runtime/this-firefox` → **Load Temporary Add-on** → select
+- **Firefox**: `about:debugging#/runtime/this-firefox` → **Load Temporary Add-on** → select
   `build/firefox/manifest.json`
-- **Safari** — needs macOS and Xcode; see [BROWSERS.md](BROWSERS.md)
+- **Safari**: needs macOS and Xcode; see [BROWSERS.md](BROWSERS.md)
 
-Click Scan. The browser will ask for access to that one origin — QuickAudit requests host
+Click Scan. The browser will ask for access to that one origin: QuickAudit requests host
 permissions per-site at scan time rather than for all sites at install.
 
 ## CLI
@@ -104,8 +104,8 @@ you're already viewing.
 
 It is **off by default** and enabling it requires an explicit authorisation acknowledgement.
 It is capped, rate-limited, origin-locked, and has no crawler and no wordlist input. Findings
-require the response body to match a content signature for that file type — status 200 alone
-is never a finding — so single-page apps with catch-all routes don't produce a wall of false
+require the response body to match a content signature for that file type: status 200 alone
+is never a finding, so single-page apps with catch-all routes don't produce a wall of false
 positives. Evidence snippets are redacted, so a screenshot of a finding doesn't leak the
 secret it found.
 
@@ -121,7 +121,7 @@ reads cookie *flags* and discards values), no telemetry, no account. See [PRIVAC
 
 ```bash
 npm test                      # everything below except the live corpus
-node test/run-tests.mjs       # 65 unit tests — checks, parsers, licence crypto
+node test/run-tests.mjs       # 65 unit tests: checks, parsers, licence crypto
 node test/compat.mjs          # 13 cross-browser manifest + source-portability tests
 node test/integration.mjs     #  7 end-to-end tests against local fixture servers
 node test/ext-smoke.mjs       # 13 extension-wiring tests × 2 namespace shapes
@@ -133,9 +133,9 @@ node test/audit-accuracy.mjs  # diffs the corpus against independently-written l
 
 **136 tests total.** `ext-smoke.mjs` runs the whole scan flow twice: once with a Chromium-style
 promise namespace, once with Firefox's promise `browser` *plus* its callback-only `chrome`
-alias — the shape that silently breaks Chrome-first extensions.
+alias: the shape that silently breaks Chrome-first extensions.
 
-`test/fixture-server.mjs` serves three local sites — one deliberately sloppy (exposes `.env`,
+`test/fixture-server.mjs` serves three local sites: one deliberately sloppy (exposes `.env`,
 `.git`, `phpinfo`, ships jQuery 1.8.3), one hardened, and one that returns HTTP 200 with an
 identical shell for every path. That last one is the false-positive trap for QA-09.
 

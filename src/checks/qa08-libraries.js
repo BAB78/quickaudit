@@ -15,7 +15,7 @@ export async function run(ctx, opts = {}) {
   if (!libs.length) {
     return result(def, 'skip',
       'No library versions could be determined.',
-      ['Bundled/minified apps often strip version markers. A clean result here is not a clean bill of health — audit your lockfile instead.']);
+      ['Bundled/minified apps often strip version markers. A clean result here is not a clean bill of health: audit your lockfile instead.']);
   }
 
   const inventory = libs.map((l) => `${l.name}@${l.version} (${l.source})`).join(', ');
@@ -41,14 +41,14 @@ export async function run(ctx, opts = {}) {
     const fixed = f.vulns.map((v) => v.fixed).find(Boolean);
     const extra = f.totalVulns && f.totalVulns > f.vulns.length ? ` (+${f.totalVulns - f.vulns.length} more advisories)` : '';
     details.push(
-      `${f.name} ${f.version} — ${f.vulns.length} advisor${f.vulns.length > 1 ? 'ies' : 'y'}${extra}` +
+      `${f.name} ${f.version}: ${f.vulns.length} advisor${f.vulns.length > 1 ? 'ies' : 'y'}${extra}` +
       `${fixed ? `, fixed in ${fixed}` : ''}` +
       `\n    ${f.vulns.slice(0, 3).map((v) => `[${v.severity}] ${v.id}${v.cves.length ? ` (${v.cves.join(', ')})` : ''}: ${v.summary}`).join('\n    ')}`
     );
     if (cves.length > 3) details.push(`    All CVEs for ${f.name}: ${cves.join(', ')}`);
   }
   details.push(`Detected inventory: ${inventory}`);
-  if (!ok) details.push(`Partial result — ${error}`);
+  if (!ok) details.push(`Partial result: ${error}`);
 
   const label = findings.map((f) => `${f.name} ${f.version}`).join(', ');
   if (worst >= rankOf('HIGH')) {

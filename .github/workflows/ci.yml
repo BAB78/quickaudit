@@ -1,5 +1,5 @@
 # QuickAudit's own CI: the full test suite, plus a self-test that runs the Action the way a
-# consumer would. The self-test is the one that matters — unit tests can pass while the
+# consumer would. The self-test is the one that matters: unit tests can pass while the
 # packaged Action is broken, which is exactly the class of bug this project keeps finding.
 
 name: tests

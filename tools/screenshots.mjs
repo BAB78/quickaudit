@@ -3,7 +3,7 @@
  * Generate store-listing screenshots at the exact 1280x800 the Chrome Web Store wants.
  *
  * Every shot renders the *real* popup and options pages driven by *real* scan data collected
- * live from the named sites — no mockups, no invented findings. Store policy requires
+ * live from the named sites: no mockups, no invented findings. Store policy requires
  * screenshots to represent the actual product, and a composited shot of genuine UI does.
  *
  *   node tools/screenshots.mjs      then open http://127.0.0.1:8091/shot/1 .. /shot/5
@@ -46,7 +46,7 @@ for (const [key, url] of Object.entries(SITES)) {
 }
 
 const CAPTIONS = {
-  1: ['Ten checks. One click.', 'Every finding cites the header that caused it — and the exact line to add.'],
+  1: ['Ten checks. One click.', 'Every finding cites the header that caused it, and the exact line to add.'],
   2: ['Not a fear machine.', 'A well-configured site scores accordingly. No invented findings to justify the install.'],
   3: ['Vulnerable libraries, checked against OSV.dev.', 'Live CVE data, not a bundled list that goes stale the week it ships.'],
   4: ['Active probing is off by default.', 'The one check that sends requests requires an explicit authorisation acknowledgement.'],
@@ -200,7 +200,7 @@ const server = http.createServer((req, res) => {
 
 server.listen(PORT, '127.0.0.1', () => {
   console.log(`\nStore screenshots (set the viewport to exactly 1280x800):`);
-  for (let n = 1; n <= 5; n++) console.log(`  ${n}. http://127.0.0.1:${PORT}/shot/${n}  — ${CAPTIONS[n][0]}`);
+  for (let n = 1; n <= 5; n++) console.log(`  ${n}. http://127.0.0.1:${PORT}/shot/${n}: ${CAPTIONS[n][0]}`);
   console.log(`\nreports: ${Object.entries(reports).map(([k, r]) => `${k}=${r.score}`).join('  ')}`);
 });
 process.on('SIGINT', () => { server.close(); process.exit(0); });

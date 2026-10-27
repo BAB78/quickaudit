@@ -19,14 +19,14 @@ export function run(ctx) {
   if (!enforced.length && !meta.length) {
     if (reportOnly.length) {
       return result(def, 'warn',
-        'Only a report-only CSP is set — nothing is actually blocked.',
+        'Only a report-only CSP is set, so nothing is actually blocked.',
         [`Content-Security-Policy-Report-Only: ${reportOnly[0].slice(0, 300)}`,
          'Report-only policies observe violations but never stop them.'],
         'Once the report stream is clean, ship the same policy as Content-Security-Policy.');
     }
     return result(def, 'fail',
       'No Content-Security-Policy.',
-      ['Any injected script — stored XSS, a compromised third-party tag, a malicious ad — runs unrestricted.']);
+      ['Any injected script (stored XSS, a compromised third-party tag, a malicious ad) runs unrestricted.']);
   }
 
   const source = enforced.length ? 'header' : 'meta tag';
@@ -39,13 +39,13 @@ export function run(ctx) {
     problems.push(`script-src: ${w.why}.`);
   }
 
-  // object-src and base-uri are the two directives default-src covers in name only —
+  // object-src and base-uri are the two directives default-src covers in name only:
   // people set default-src 'self' and still leave <base> injection open.
   if (!policy['object-src'] && !policy['default-src']) {
-    problems.push("object-src is unset — <object>/<embed> can load plugin content.");
+    problems.push("object-src is unset: <object>/<embed> can load plugin content.");
   }
   if (!policy['base-uri']) {
-    problems.push("base-uri is unset — an injected <base> tag can redirect every relative script URL.");
+    problems.push("base-uri is unset: an injected <base> tag can redirect every relative script URL.");
   }
 
   if (!enforced.length) {

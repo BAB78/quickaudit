@@ -40,12 +40,12 @@ export function run(ctx) {
       return result(def, 'fail',
         `Referrer-Policy "${effectiveValue}" leaks full URLs cross-origin.`,
         [`Referrer-Policy: ${rp}`,
-         `"${effectiveValue}" sends the full URL — path, query, any token in it — to every cross-origin request, including plaintext ones.`,
+         `"${effectiveValue}" sends the full URL (path, query, any token in it) to every cross-origin request, including plaintext ones.`,
          pp ? `Permissions-Policy: ${pp.slice(0, 160)}` : 'Permissions-Policy is also absent.']);
     }
     if (LEAKY_WARN.includes(effectiveValue)) {
       problems.push(effectiveValue === 'no-referrer-when-downgrade'
-        ? 'Referrer-Policy "no-referrer-when-downgrade" sends the full URL — path and query — on same-scheme cross-origin requests.'
+        ? 'Referrer-Policy "no-referrer-when-downgrade" sends the full URL (path and query) on same-scheme cross-origin requests.'
         : 'Referrer-Policy "origin-when-cross-origin" sends your origin to third parties even on a downgrade to http.');
     } else if (!SAFE.includes(effectiveValue)) {
       problems.push(`Referrer-Policy value "${effectiveValue}" is not a recognised token and will be ignored.`);

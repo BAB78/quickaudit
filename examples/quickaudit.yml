@@ -11,7 +11,7 @@ on:
   push:
     branches: [main, master]
   schedule:
-    # Configuration drifts without anyone touching the repo — a CDN setting changes, a
+    # Configuration drifts without anyone touching the repo: a CDN setting changes, a
     # dependency ships a new bundle. A weekly run catches that; pull requests alone don't.
     - cron: '0 7 * * 1'
 
@@ -51,7 +51,7 @@ jobs:
 #        url: https://example.com
 #        fail-on: never
 
-# 3. Run a subset — for example headers only, skipping the library and file checks.
+# 3. Run a subset: for example headers only, skipping the library and file checks.
 #    - uses: BAB78/quickaudit@v1
 #      with:
 #        url: https://example.com

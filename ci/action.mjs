@@ -52,7 +52,7 @@ async function main() {
 
     const summary = renderSummary(report, verdict, {
       url,
-      title: urls.length > 1 ? `QuickAudit — ${hostOf(url)}` : 'QuickAudit',
+      title: urls.length > 1 ? `QuickAudit: ${hostOf(url)}` : 'QuickAudit',
     });
     if (!summaryWrite(summary)) console.log(summary);
 
@@ -77,7 +77,7 @@ async function main() {
 
   // Set the code and let Node drain naturally. Calling process.exit() here races the
   // still-closing HTTP sockets and trips a libuv assertion on Windows, which surfaces as a
-  // garbage exit status — fatal for an Action, where the exit code *is* the result.
+  // garbage exit status: fatal for an Action, where the exit code *is* the result.
   process.exitCode = worstExit;
 }
 
@@ -105,7 +105,7 @@ function parseChecks(raw) {
 function emitAnnotations(report, verdict, url, multi) {
   const prefix = multi ? `${hostOf(url)}: ` : '';
   for (const r of report.results) {
-    const line = `${prefix}${r.id} ${r.title} — ${r.summary}`;
+    const line = `${prefix}${r.id} ${r.title}: ${r.summary}`;
     if (r.status === 'error') error(`${line} (check failed to run)`);
     else if (r.status === 'fail') {
       verdict.blocking.includes(r) ? error(line) : warning(line);

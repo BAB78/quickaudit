@@ -24,7 +24,7 @@ export function run(ctx) {
         'CSP frame-ancestors allows any origin to frame this page.',
         [`frame-ancestors ${list}`]);
     }
-    // frame-ancestors, when present, overrides X-Frame-Options entirely — worth saying,
+    // frame-ancestors, when present, overrides X-Frame-Options entirely: worth saying,
     // because people spend time "fixing" a contradictory XFO that browsers ignore.
     const note = xfo && xfoVal !== 'DENY' && xfoVal !== 'SAMEORIGIN'
       ? [`Note: X-Frame-Options: ${xfo} is present but ignored by browsers that support frame-ancestors.`]
@@ -46,13 +46,13 @@ export function run(ctx) {
     return result(def, 'pass',
       `Framing restricted by X-Frame-Options: ${xfoVal}.`,
       [`X-Frame-Options: ${xfo}`,
-       `Consider also setting Content-Security-Policy: frame-ancestors ${xfoVal === 'DENY' ? "'none'" : "'self'"} — the standardised replacement.`]);
+       `Consider also setting Content-Security-Policy: frame-ancestors ${xfoVal === 'DENY' ? "'none'" : "'self'"} (the standardised replacement).`]);
   }
 
   if (xfoVal.startsWith('ALLOW-FROM')) {
     return result(def, 'fail',
       'X-Frame-Options uses the obsolete ALLOW-FROM form, which no current browser honours.',
-      [`X-Frame-Options: ${xfo}`, 'Chrome, Firefox and Safari all ignore ALLOW-FROM — this page is effectively unprotected.']);
+      [`X-Frame-Options: ${xfo}`, 'Chrome, Firefox and Safari all ignore ALLOW-FROM, so this page is effectively unprotected.']);
   }
 
   return result(def, 'fail',

@@ -3,7 +3,7 @@
  * Phase 3 validation corpus: 20 real sites, a deliberate mix of security-conscious
  * organisations and older/looser properties.
  *
- * PASSIVE CHECKS ONLY. The active file-exposure check (QA-09) is never run here — probing
+ * PASSIVE CHECKS ONLY. The active file-exposure check (QA-09) is never run here: probing
  * third-party servers for /.env is not something to do casually, and it is validated against
  * the local fixture servers instead (test/integration.mjs).
  *
@@ -16,7 +16,7 @@ import { runAll } from '../src/checks/index.js';
 import { memoryCache } from '../src/core/osv.js';
 
 const SITES = [
-  // Expected to be tight — security vendors, big engineering orgs
+  // Expected to be tight: security vendors, big engineering orgs
   { url: 'https://github.com/', bucket: 'hardened' },
   { url: 'https://www.cloudflare.com/', bucket: 'hardened' },
   { url: 'https://www.mozilla.org/en-US/', bucket: 'hardened' },
@@ -27,7 +27,7 @@ const SITES = [
   { url: 'https://1password.com/', bucket: 'hardened' },
   { url: 'https://owasp.org/', bucket: 'hardened' },
   { url: 'https://www.hackerone.com/', bucket: 'hardened' },
-  // Expected to be looser — older stacks, CMS-driven, or simply not header-focused
+  // Expected to be looser: older stacks, CMS-driven, or simply not header-focused
   { url: 'https://news.ycombinator.com/', bucket: 'mixed' },
   { url: 'https://www.wikipedia.org/', bucket: 'mixed' },
   { url: 'https://www.python.org/', bucket: 'mixed' },

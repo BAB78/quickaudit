@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/** End-to-end: real HTTP, real collector, real checks — against the local fixture servers. */
+/** End-to-end: real HTTP, real collector, real checks, against the local fixture servers. */
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';

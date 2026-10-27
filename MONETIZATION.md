@@ -1,4 +1,4 @@
-# Phase 5 — monetization
+# Phase 5: monetization
 
 **Status: mechanism built and tested. No store, product, or payment account has been created.**
 Every step below that touches money is waiting on your go-ahead.
@@ -12,12 +12,12 @@ crippling it would kill the word-of-mouth that makes a tool like this spread.
 
 | Pro feature | Status |
 |---|---|
-| HTML report export (print-to-PDF ready, self-contained, client-ready) | ✅ built — `src/ext/report.js` |
-| Custom check sets — enable/disable checks | ✅ built — options page |
+| HTML report export (print-to-PDF ready, self-contained, client-ready) | ✅ built: `src/ext/report.js` |
+| Custom check sets (enable/disable checks | ✅ built) options page |
 | Scan history | ⬜ v1.1 |
 | CSV export | ⬜ v1.1 |
 
-$19 sits in the middle of your $15–25 range. It's an expense-without-asking amount for a
+$19 sits in the middle of your $15-25 range. It's an expense-without-asking amount for a
 developer, and it's above the "is this abandonware?" line that $5 tools fall below.
 
 ## Why one-time, and why no licence server
@@ -51,14 +51,14 @@ product. Not a problem worth solving.
 | | LemonSqueezy | Gumroad |
 |---|---|---|
 | Fees | 5% + 50¢ | 10% flat |
-| Merchant of record | Yes — handles EU VAT / US sales tax | Yes |
+| Merchant of record | Yes: handles EU VAT / US sales tax | Yes |
 | Licence key API | Built in, plus webhooks | Add-on |
 | Net on a $19 sale | ~$17.55 | ~$17.10 |
 
 LemonSqueezy is cheaper and its licensing support means you can automate issuance later. But
 this matters less than it looks: **for v1, issue keys manually.** At the volume a launch
 produces, running `node tools/issue-license.mjs` when an order email arrives takes ten seconds
-and costs nothing. Automate it via webhook once it's actually annoying — that's a good problem
+and costs nothing. Automate it via webhook once it's actually annoying: that's a good problem
 to have and a wasted afternoon before then.
 
 Either platform works with the mechanism as built; nothing in the extension depends on which
@@ -68,13 +68,13 @@ you pick.
 
 | Store | Cost | Status |
 |---|---|---|
-| Microsoft Edge Add-ons | free | — |
-| addons.mozilla.org | free | — |
+| Microsoft Edge Add-ons | free | - |
+| addons.mozilla.org | free | - |
 | Chrome Web Store | $5 one-time | not yet registered |
-| Apple App Store | $99/year | **already paid** — the existing BAB Studios membership (Team ID on file, used for the Amora iOS build) covers unlimited apps |
+| Apple App Store | $99/year | **already paid**: the existing BAB Studios membership (Team ID on file, used for the Amora iOS build) covers unlimited apps |
 
 So the only new money required to publish on Chrome, Edge and Firefox is **$5, once**. Safari
-adds no fee at all; what it adds is roughly a day of work — a macOS container app with real UI,
+adds no fee at all; what it adds is roughly a day of work: a macOS container app with real UI,
 a Mac App Distribution certificate that doesn't exist yet, and a stricter review. See
 [BROWSERS.md](BROWSERS.md).
 
@@ -84,22 +84,22 @@ Publishing as **BAB Studios**, GitHub `BAB78`, **UK sole trader**.
 
 For the payment signup that means:
 
-- **Legal/tax identity** — Bright Bediako as an individual. UK sole traders trade under their
+- **Legal/tax identity**: Bright Bediako as an individual. UK sole traders trade under their
   own legal name; "BAB Studios" is a trading name, not a separate legal person. Verification
   documents must match the individual, not the trading name.
-- **Display/store name** — "BAB Studios". This is what appears on customers' card statements.
-- **VAT** — nothing to register for. The UK VAT threshold is far above anything this will earn,
+- **Display/store name**: "BAB Studios". This is what appears on customers' card statements.
+- **VAT**: nothing to register for. The UK VAT threshold is far above anything this will earn,
   and because the platform is merchant of record it accounts for VAT on the sale anyway. This
   is exactly the reason not to use raw Stripe.
-- **HMRC** — income counts as self-employment income. The UK trading allowance means the first
+- **HMRC**: income counts as self-employment income. The UK trading allowance means the first
   **£1,000** of gross self-employed income in a tax year need not be reported. Given the
-  realistic first-year estimate below, this may well cover it — but confirm against current
+  realistic first-year estimate below, this may well cover it, but confirm against current
   HMRC guidance rather than taking it from here, and note the allowance is across *all* your
   self-employed income, not per project.
-- **Country** — United Kingdom is fully supported for both bank payouts and Stripe Managed
+- **Country**: United Kingdom is fully supported for both bank payouts and Stripe Managed
   Payments, so there is no payout-eligibility risk to work around.
 
-## Store account decision — resolved
+## Store account decision: resolved
 
 Your earlier releases went out under the BAB Studios Google Play account. **Chrome Web Store
 is a separate developer program with its own one-time $5 registration fee**, so publishing
@@ -117,13 +117,13 @@ business decision, not a technical one.
 ## Launch sequence (nothing here is done)
 
 1. You confirm the publishing account and pay the $5 registration.
-2. Submit v1.0.0 free-only. Get through review before money is involved — a store rejection
+2. Submit v1.0.0 free-only. Get through review before money is involved: a store rejection
    with a live payment page is a worse day than one without.
 3. Once approved, create the LemonSqueezy product and drop the URL into the options page.
 4. Launch posts (see `LAUNCH.md`) point at the **free** tool. Pro is a line in the footer.
 5. Issue keys by hand. Automate if and when volume justifies it.
 
 **Revenue expectation, stated plainly:** a well-received r/netsec + dev.to launch might put
-2,000–5,000 people on the listing over a week, converting to a few hundred installs and
-plausibly 5–20 Pro sales. That's $100–400. This is a portfolio and credibility play with a
-small revenue tail, not an income stream — worth doing with clear eyes about which it is.
+2,000-5,000 people on the listing over a week, converting to a few hundred installs and
+plausibly 5-20 Pro sales. That's $100-400. This is a portfolio and credibility play with a
+small revenue tail, not an income stream: worth doing with clear eyes about which it is.

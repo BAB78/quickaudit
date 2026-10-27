@@ -22,7 +22,7 @@ const key = createPrivateKey(readFileSync(new URL('../.keys/private.pem', import
 /**
  * The key unlocks up to and including this major version. Defaults to whatever is shipping,
  * so a buyer today gets all of 1.x free and a future 2.0 is a new purchase. Pass an explicit
- * value to be more generous — e.g. `2` for someone who bought just before a major release.
+ * value to be more generous: e.g. `2` for someone who bought just before a major release.
  */
 const manifest = JSON.parse(readFileSync(new URL('../manifest.base.json', import.meta.url), 'utf8'));
 const maxMajor = Number(majorArg ?? manifest.version.split('.')[0]);
@@ -44,7 +44,7 @@ const body = b64u(Buffer.from(JSON.stringify(payload)));
 const sig = b64u(sign('sha256', Buffer.from(body), { key, dsaEncoding: 'ieee-p1363' }));
 
 console.log(`\nQuickAudit Pro licence for ${payload.e}`);
-console.log(`Unlocks QuickAudit ${maxMajor}.x — all updates within that major version.\n`);
+console.log(`Unlocks QuickAudit ${maxMajor}.x: all updates within that major version.\n`);
 console.log(`QA1.${body}.${sig}\n`);
 
 function b64u(buf) {

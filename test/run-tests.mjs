@@ -151,7 +151,7 @@ await t('QA-04: binary pass/fail', () => {
 await t('QA-05: both missing warns', () => assert.equal(st(qa05.run(ctx())), 'warn'));
 await t('QA-05: unsafe-url fails, but legacy defaults only warn', () => {
   assert.equal(st(qa05.run(ctx({ headers: { 'referrer-policy': 'unsafe-url' } }))), 'fail');
-  // These leak less than unsafe-url and were browser defaults for years — warn, don't fail.
+  // These leak less than unsafe-url and were browser defaults for years: warn, don't fail.
   for (const v of ['no-referrer-when-downgrade', 'origin-when-cross-origin']) {
     const r = qa05.run(ctx({ headers: { 'referrer-policy': v, 'permissions-policy': 'camera=()' } }));
     assert.equal(r.status, 'warn', `${v} should warn, got ${r.status}`);
@@ -397,11 +397,11 @@ globalThis.chrome = {
 };
 const { verifyKey, activate, getLicense, isPro } = await import('../src/ext/license.js');
 
-/** Issued with `m: 1` — unlocks 1.x only. */
+/** Issued with `m: 1`: unlocks 1.x only. */
 const V1_KEY = 'QA1.eyJlIjoiYnV5ZXJAZXhhbXBsZS5jb20iLCJvIjoiT1JERVItOTAwMSIsInQiOiIyMDI2LTA3LTMwIiwicCI6InBybyIsInYiOjEsIm0iOjF9.SDMRYt79qNYJtyP1inj4iYyqL2LOKoL6RaLKSLzMN8Yepr3FDAqzqhCczFsREqtSRJUS-hT3tuou98SynkVA2g';
-/** Issued with `m: 2` — a buyer given the next major version too. */
+/** Issued with `m: 2`: a buyer given the next major version too. */
 const V2_KEY = 'QA1.eyJlIjoiZWFybHlAZXhhbXBsZS5jb20iLCJvIjoiT1JERVItOTAwMiIsInQiOiIyMDI2LTA3LTMwIiwicCI6InBybyIsInYiOjEsIm0iOjJ9.N3eVdvxblbN2eusE98GkTSQ7fHtgUyNuaz4MWV8kNXlI7O8jx9Rw8Q9DmKGRjczclk5q9EabTN46ihwWa9M-zA';
-/** Pre-ceiling key with no `m` field at all — must be grandfathered, never rejected. */
+/** Pre-ceiling key with no `m` field at all: must be grandfathered, never rejected. */
 const LEGACY_KEY = 'QA1.eyJlIjoiYnV5ZXJAZXhhbXBsZS5jb20iLCJvIjoiT1JERVItOTAwMSIsInQiOiIyMDI2LTA3LTMwIiwicCI6InBybyIsInYiOjF9.ntgp22WlsMJdK4qW35JSTAdLK7NtHMPLMXu-uIk6YY9sXWuI7P8Y7kwMgRhVr_XAoWy9qkagBwfOZ5IdTmf_WA';
 const VALID_KEY = V1_KEY;
 

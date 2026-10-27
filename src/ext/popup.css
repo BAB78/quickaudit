@@ -28,7 +28,7 @@ body {
 
 /*
  * body is a flex column with a max-height, so every chrome element must opt out of
- * shrinking — otherwise they get compressed and clip their own text. Only .results flexes.
+ * shrinking: otherwise they get compressed and clip their own text. Only .results flexes.
  */
 header, .target, .scoreboard, .notes, footer { flex: none; }
 

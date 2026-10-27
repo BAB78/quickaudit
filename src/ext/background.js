@@ -1,6 +1,6 @@
 /**
  * Background collector: builds a PageContext from WebExtension APIs, then runs the same ten
- * checks the CLI runs. Nothing security-relevant is decided in here — this file only collects.
+ * checks the CLI runs. Nothing security-relevant is decided in here: this file only collects.
  *
  * Runs as a service worker on Chromium/Safari and as an event page on Firefox. Both are
  * non-persistent, so nothing here may rely on module state surviving between messages.
@@ -17,7 +17,7 @@ import { PROBE_BODY_LIMIT } from '../core/types.js';
  * Headers are read with a credentialed fetch rather than by observing the navigation.
  *
  * The webRequest API would give the exact bytes of the original response, but Chrome only
- * delivers those events to extensions holding host permissions *at install time* — and
+ * delivers those events to extensions holding host permissions *at install time*, and
  * QuickAudit deliberately asks for one origin at a time, when you click Scan. Requesting
  * access to every site up front to gain slightly more faithful headers is a bad trade for a
  * tool whose selling point is that it doesn't do that. Chrome also logs a permanent error
@@ -47,7 +47,7 @@ async function scanTab(tabId) {
   const u = new URL(url);
   const originPattern = `${u.origin}/*`;
 
-  // The popup must request this itself — Firefox only allows permissions.request() inside a
+  // The popup must request this itself: Firefox only allows permissions.request() inside a
   // user-input handler, so it can never be proxied through here.
   const hasPerm = await api.permissions.contains({ origins: [originPattern] });
   if (!hasPerm) return { needsPermission: originPattern, origin: u.origin };
@@ -93,7 +93,7 @@ async function scanTab(tabId) {
     ...(globals || []),
     ...resources.filter((r) => r.type === 'script').map((r) => detectFromUrl(r.url)).filter(Boolean),
   ]);
-  if (!dom) notes.push('Could not inject the page collector — mixed-content and library detection are incomplete.');
+  if (!dom) notes.push('Could not inject the page collector, so mixed-content and library detection are incomplete.');
   if (dom && !globals) {
     notes.push('This browser blocked main-world injection, so library versions came from script URLs only. Bundled libraries may be missed.');
   }
@@ -121,7 +121,7 @@ async function scanTab(tabId) {
 }
 
 /**
- * Inject a collector. Returns null rather than throwing when the engine refuses — Safari and
+ * Inject a collector. Returns null rather than throwing when the engine refuses: Safari and
  * older Firefox reject `world: 'MAIN'`, and losing global detection is a degraded scan, not a
  * failed one.
  */
@@ -181,7 +181,7 @@ function collectDom() {
 
   // Everything the page actually fetched, including anything JS injected at runtime.
   for (const e of performance.getEntriesByType('resource')) add(e.name, typeOf(e.initiatorType));
-  // Plus declared markup, which catches resources the browser blocked before fetching —
+  // Plus declared markup, which catches resources the browser blocked before fetching:
   // blocked mixed content leaves no performance entry, so both sources are needed.
   for (const el of document.querySelectorAll('script[src]')) add(el.src, 'script');
   for (const el of document.querySelectorAll('link[rel~="stylesheet"][href]')) add(el.href, 'css');
@@ -196,7 +196,7 @@ function collectDom() {
 /**
  * Read library versions off the page's globals by walking property paths.
  *
- * Deliberately contains no evaluator — no eval, no `new Function`, no string that becomes
+ * Deliberately contains no evaluator: no eval, no `new Function`, no string that becomes
  * code. A security extension that ships a dynamic code path invites exactly the review it
  * does not need, and reading a property path does the same job.
  */

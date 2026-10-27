@@ -4,7 +4,7 @@
  * The important subtlety: Firefox and Safari expose a promise-based `browser.*`, and Firefox
  * *also* exposes a `chrome.*` alias that is callback-based. So `await chrome.storage.local.get()`
  * silently resolves to undefined on Firefox. Preferring `browser` when it exists is the whole
- * fix, and it must be done everywhere — which is why no other file touches the raw namespace.
+ * fix, and it must be done everywhere, which is why no other file touches the raw namespace.
  */
 export const api = globalThis.browser ?? globalThis.chrome;
 

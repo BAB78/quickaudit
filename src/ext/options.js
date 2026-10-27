@@ -106,10 +106,10 @@ async function renderLicense() {
   const box = document.createElement('div');
   box.className = 'pro-active';
   box.innerHTML = lic.covered
-    ? `<b>Pro active</b> — licensed to ${escapeHtml(lic.email)} (issued ${escapeHtml(lic.issued || '—')}).`
+    ? `<b>Pro active</b>: licensed to ${escapeHtml(lic.email)} (issued ${escapeHtml(lic.issued || '-')}).`
     // A genuine key that predates this major version. Say exactly that, rather than the
     // alarming and wrong "invalid key".
-    : `<b class="stale">Licence is for an earlier version</b> — ${escapeHtml(lic.reason)}<br>
+    : `<b class="stale">Licence is for an earlier version</b>: ${escapeHtml(lic.reason)}<br>
        Your key (${escapeHtml(lic.email)}) stays valid for that version. Upgrading to this one is a new purchase.`;
   const off = document.createElement('button');
   off.className = 'ghost';
@@ -126,7 +126,7 @@ async function onActivate() {
   const res = await activate($('key').value);
   if (res.valid) {
     msg.className = 'msg ok';
-    msg.textContent = `Activated. Thank you — report export is now unlocked.`;
+    msg.textContent = `Activated, thank you. Report export is now unlocked.`;
     $('key').value = '';
     await renderLicense();
   } else {

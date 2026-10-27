@@ -2,9 +2,9 @@
  * JS library detection.
  *
  * Three sources, in descending confidence:
- *   global  — read off the live page object (jQuery.fn.jquery). Can't be wrong.
- *   url     — parsed from the script URL (jquery-3.4.1.min.js, /npm/lodash@4.17.11/).
- *   banner  — the /*! jQuery v3.4.1 comment at the top of a bundle.
+ *   global: read off the live page object (jQuery.fn.jquery). Can't be wrong.
+ *   url: parsed from the script URL (jquery-3.4.1.min.js, /npm/lodash@4.17.11/).
+ *   banner: the /*! jQuery v3.4.1 comment at the top of a bundle.
  *
  * Names map to npm package names because that is the ecosystem OSV indexes these in.
  */
@@ -13,7 +13,7 @@
  * Globals the injected collector reads, expressed as **property paths rather than code**.
  *
  * These were once expression strings evaluated with `new Function()`. That is dynamic code
- * execution inside a security extension — the thing store reviewers are most likely to stop
+ * execution inside a security extension: the thing store reviewers are most likely to stop
  * on, and entirely avoidable: walking a path array does the same job with no evaluator.
  *
  *   path     properties to walk from the page's global object
@@ -70,7 +70,7 @@ const URL_PATTERNS = [
 
 /**
  * CDN/file names that differ from the npm package name OSV indexes.
- * Note the `.js` suffixes are only stripped where the npm package genuinely lacks it —
+ * Note the `.js` suffixes are only stripped where the npm package genuinely lacks it:
  * `chart.js` and `video.js` really are published under those names.
  */
 const ALIASES = {
@@ -122,7 +122,7 @@ const ALIASES = {
 };
 
 /**
- * Names too generic to trust from a URL alone — `/app/1.2.3/main.js` is not a library.
+ * Names too generic to trust from a URL alone: `/app/1.2.3/main.js` is not a library.
  * Without this the URL matcher turns every versioned asset path into a bogus OSV query.
  */
 const URL_NAME_DENYLIST = new Set([
@@ -203,7 +203,7 @@ export function detectFromBanner(source) {
 
 /**
  * Merge detections, keeping the highest-confidence version per package.
- * If a global says jQuery 3.6.0, a URL saying 1.12.4 is a second copy worth keeping —
+ * If a global says jQuery 3.6.0, a URL saying 1.12.4 is a second copy worth keeping:
  * but only if the versions genuinely differ.
  */
 export function mergeLibraries(list) {

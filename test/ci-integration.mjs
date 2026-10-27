@@ -72,7 +72,7 @@ t('outputs are written for later steps', () => {
 });
 
 t('the job summary is real markdown a developer can read', () => {
-  assert.match(sloppy.summary, /## QuickAudit — failed/);
+  assert.match(sloppy.summary, /## QuickAudit: failed/);
   assert.match(sloppy.summary, /\| Score \| Failed \| Warnings \| Passed \| Skipped \|/);
   assert.match(sloppy.summary, /QA-02/);
   assert.match(sloppy.summary, /How to fix/);
@@ -88,7 +88,7 @@ const tight = runAction({ url: 'http://127.0.0.1:8083/', 'fail-on': 'high' });
 
 t('a well configured site passes the build', () => {
   // The fixture is plain http on localhost, so QA-01 fails by design. That is a `high`
-  // finding, which correctly blocks — so the meaningful assertion is that everything else
+  // finding, which correctly blocks, so the meaningful assertion is that everything else
   // passed and the only blocker is the one we expect.
   const parsed = JSON.parse(tight.outputs['report-json'])[0];
   const blocking = parsed.results.filter((r) => r.status === 'fail');
@@ -99,7 +99,7 @@ t('the same site passes once transport is excluded', () => {
   const res = runAction({ url: 'http://127.0.0.1:8083/', checks: 'QA-02,QA-03,QA-04,QA-05,QA-06' });
   assert.equal(res.code, 0, `expected a clean pass, got ${res.code}`);
   assert.equal(res.outputs.passed, 'true');
-  assert.match(res.summary, /## QuickAudit — passed/);
+  assert.match(res.summary, /## QuickAudit: passed/);
 });
 
 // ── policy controls ─────────────────────────────────────────────────────────────

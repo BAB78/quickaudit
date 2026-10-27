@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Draw the QuickAudit icon (shield + check) at every size the store needs, with no image
- * dependencies — a tiny rasteriser plus zlib is enough for a flat two-colour glyph.
+ * dependencies: a tiny rasteriser plus zlib is enough for a flat two-colour glyph.
  */
 import { deflateSync } from 'node:zlib';
 import { writeFileSync, mkdirSync } from 'node:fs';

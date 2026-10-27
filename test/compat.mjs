@@ -5,7 +5,7 @@
  * Two jobs: validate each target's generated manifest against what that engine actually
  * accepts, and enforce that no code outside browser-api.js touches a raw extension namespace
  * (the Firefox `chrome.*` alias is callback-based, so `await chrome.storage.local.get()`
- * resolves to undefined — a bug that is invisible until a Firefox user hits it).
+ * resolves to undefined: a bug that is invisible until a Firefox user hits it).
  */
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
@@ -74,7 +74,7 @@ t('Firefox declares the add-on id and a version floor that supports module event
 t('downloads permission is only requested where the API exists', () => {
   assert.ok(built.chrome.manifest.permissions.includes('downloads'));
   assert.ok(built.firefox.manifest.permissions.includes('downloads'));
-  // Safari has no downloads API — requesting it would be a review flag for no benefit.
+  // Safari has no downloads API: requesting it would be a review flag for no benefit.
   assert.ok(!built.safari.manifest.permissions.includes('downloads'),
     'Safari build must not request a permission the engine does not implement');
 });
@@ -105,7 +105,7 @@ const codeOf = (file) => stripComments(readFileSync(file, 'utf8'));
 
 /**
  * Also drop string literals. libdetect.js stores probe expressions like
- * "window.jQuery && ..." as *data* — they are evaluated inside the page, never here, so they
+ * "window.jQuery && ..." as *data*: they are evaluated inside the page, never here, so they
  * must not count as the module reaching for a browser global.
  */
 const stripStrings = (src) => src.replace(/'(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*"|`(?:[^`\\]|\\.)*`/g, "''");
@@ -134,7 +134,7 @@ t('no Chromium-only API is used without a feature guard', () => {
   // the bare word, which lets the comments explain why webRequest is absent.
   const bg = readFileSync(path.join(root, 'src/ext/background.js'), 'utf8');
   assert.ok(!/(api|chrome|browser)\.webRequest/.test(bg),
-    'the background must not call webRequest — it can never fire under optional host permissions');
+    'the background must not call webRequest: it can never fire under optional host permissions');
   assert.ok(/if \(can\.cookies\)/.test(bg), 'cookies access must be feature-guarded');
   const popup = readFileSync(path.join(root, 'src/ext/popup.js'), 'utf8');
   assert.ok(/if \(can\.downloads\)/.test(popup), 'downloads must be feature-guarded');
@@ -151,7 +151,7 @@ t('permissions.request is raised from the popup, never the background', () => {
 
 t('nothing in the shipped source evaluates code at runtime', () => {
   // Store reviewers treat any dynamic code path in a security extension as a red flag, and
-  // QuickAudit has no need for one — library probes walk property paths instead.
+  // QuickAudit has no need for one: library probes walk property paths instead.
   for (const f of extFiles) {
     const code = stripStrings(codeOf(f));
     for (const pattern of [/\bnew Function\b/, /\beval\s*\(/, /setTimeout\s*\(\s*['"`]/, /\bnew\s+AsyncFunction\b/]) {
@@ -162,7 +162,7 @@ t('nothing in the shipped source evaluates code at runtime', () => {
 
 t('no DOM or window access in code the background loads', () => {
   // Service workers have no document. The injected collectors do use it, but they are
-  // serialized into the page rather than executed here — so split before stripping comments.
+  // serialized into the page rather than executed here, so split before stripping comments.
   const raw = readFileSync(path.join(root, 'src/ext/background.js'), 'utf8');
   const beforeInjected = stripStrings(stripComments(raw.split('── injected functions')[0]));
   for (const forbidden of ['document.', 'window.', 'localStorage']) {

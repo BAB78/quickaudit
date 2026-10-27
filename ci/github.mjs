@@ -4,7 +4,7 @@
  *
  * Deliberately hand-rolled rather than using @actions/core and @actions/github. QuickAudit
  * has no dependencies, which means this Action needs no bundler and no `dist/` committed to
- * the repo — the source you read is the code that runs. That property is worth more here
+ * the repo: the source you read is the code that runs. That property is worth more here
  * than the small convenience those packages provide.
  */
 import { appendFileSync } from 'node:fs';
@@ -58,7 +58,7 @@ export function renderSummary(report, verdict, { url, title = 'QuickAudit' } = {
   for (const r of report.results) counts[r.status] = (counts[r.status] || 0) + 1;
 
   const lines = [];
-  lines.push(`## ${title} — ${verdict.shouldFail ? 'failed' : 'passed'}`);
+  lines.push(`## ${title}: ${verdict.shouldFail ? 'failed' : 'passed'}`);
   lines.push('');
   lines.push(`**${url}**`);
   lines.push('');
@@ -98,7 +98,7 @@ export function renderSummary(report, verdict, { url, title = 'QuickAudit' } = {
     // a scanner ends up implying a clean bill of health it never established.
     lines.push(`<details><summary>${skipped.length} check(s) skipped</summary>`);
     lines.push('');
-    for (const r of skipped) lines.push(`- **${r.id}** ${r.title} — ${escapeCell(r.summary)}`);
+    for (const r of skipped) lines.push(`- **${r.id}** ${r.title}: ${escapeCell(r.summary)}`);
     lines.push('');
     lines.push('</details>');
     lines.push('');
@@ -119,7 +119,7 @@ function escapeCell(s) {
 /**
  * Post or update a single comment on the pull request.
  *
- * Updates in place rather than adding one per run — a bot that posts a fresh comment on
+ * Updates in place rather than adding one per run: a bot that posts a fresh comment on
  * every push turns a busy PR into a wall of noise, which is how teams end up muting the
  * tool that was supposed to help them.
  */

@@ -5,7 +5,7 @@
  * Re-derives the expected verdict for each site from the recorded raw headers using logic
  * written independently of src/checks (deliberately naive, straight from the header text),
  * then diffs it against what QuickAudit actually reported. Every disagreement is printed in
- * full for manual adjudication — the point is to surface disagreements, not to auto-grade.
+ * full for manual adjudication: the point is to surface disagreements, not to auto-grade.
  */
 import { readFileSync } from 'node:fs';
 

@@ -16,7 +16,7 @@ export const CHECK_META = CHECKS.map((c) => ({ ...c.def }));
 
 /**
  * Run every enabled check over a PageContext.
- * A check that throws produces an `error` result rather than taking the whole scan down —
+ * A check that throws produces an `error` result rather than taking the whole scan down:
  * a scanner that dies on one bad header is worse than useless.
  */
 export async function runAll(ctx, opts = {}) {
@@ -33,7 +33,7 @@ export async function runAll(ctx, opts = {}) {
         title: check.def.title,
         status: 'skip',
         severity: 'info',
-        summary: 'Skipped — the origin served a bot-protection challenge, not the page.',
+        summary: 'Skipped: the origin served a bot-protection challenge, not the page.',
         details: [ctx.challenge, 'Run the scan from the extension while viewing the real page, which sees the headers your browser actually received.'],
         fix: '',
         ref: check.def.ref || '',

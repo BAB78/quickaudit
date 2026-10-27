@@ -3,7 +3,7 @@
  *
  * Keys are ECDSA P-256 signatures over a tiny JSON payload. The extension holds only the
  * public key, so there is no licence server to run, nothing phones home, and the check
- * works on a plane. A determined user can patch the extension — that is true of every
+ * works on a plane. A determined user can patch the extension: that is true of every
  * client-side unlock, and building auth infrastructure to stop them is not worth it for a
  * $19 one-time purchase.
  *
@@ -62,7 +62,7 @@ export async function verifyKey(key) {
       issued: payload.t,
       order: payload.o,
       // `m` is the highest major version this key unlocks. Keys issued without it are
-      // grandfathered to every version — that is why it has to exist before the first sale.
+      // grandfathered to every version: that is why it has to exist before the first sale.
       maxMajor: payload.m == null ? Infinity : Number(payload.m),
     };
   } catch (e) {

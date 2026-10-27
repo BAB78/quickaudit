@@ -17,7 +17,7 @@ export function run(ctx) {
     return result(def, 'fail',
       'Page is served over plaintext HTTP.',
       [`Document URL: ${ctx.url}`,
-       'Everything on this page — cookies, form posts, tokens — is readable and modifiable in transit.'],
+       'Everything on this page (cookies, form posts, tokens) is readable and modifiable in transit.'],
       'Serve the site over HTTPS and 301-redirect all HTTP traffic, then add HSTS.');
   }
 

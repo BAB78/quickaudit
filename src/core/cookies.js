@@ -2,7 +2,7 @@ import { parseDirectiveList } from './headers.js';
 
 /**
  * Parse one Set-Cookie header value into a CookieInfo.
- * We deliberately keep the name and drop the value — QuickAudit never reads secrets.
+ * We deliberately keep the name and drop the value: QuickAudit never reads secrets.
  */
 export function parseSetCookie(raw) {
   const s = String(raw);

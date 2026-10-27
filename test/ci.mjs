@@ -99,7 +99,7 @@ t('summary reports the score, the verdict and each finding', () => {
   const rep = report([r('QA-02', 'fail', 'high'), r('QA-01', 'pass', 'info'), r('QA-09', 'skip', 'info')]);
   const v = evaluate(rep, {});
   const md = renderSummary(rep, v, { url: 'https://example.com/' });
-  assert.match(md, /## QuickAudit — failed/);
+  assert.match(md, /## QuickAudit: failed/);
   assert.match(md, /50\/100/);
   assert.match(md, /QA-02/);
   assert.match(md, /https:\/\/example\.com\//);
@@ -109,7 +109,7 @@ t('summary reports the score, the verdict and each finding', () => {
 
 t('summary says passed when nothing blocks', () => {
   const rep = report([r('QA-01', 'pass', 'info')]);
-  assert.match(renderSummary(rep, evaluate(rep, {}), { url: 'https://x.com/' }), /## QuickAudit — passed/);
+  assert.match(renderSummary(rep, evaluate(rep, {}), { url: 'https://x.com/' }), /## QuickAudit: passed/);
 });
 
 t('summary escapes pipes so a finding cannot break the table', () => {

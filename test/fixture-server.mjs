@@ -3,9 +3,9 @@
  * Two deliberately-broken local sites, so the active check (QA-09) and the full pipeline can
  * be validated end-to-end without sending probe traffic to anyone else's servers.
  *
- *   :8081  "sloppy"  — exposes .env, .git, phpinfo; no security headers; insecure cookies
- *   :8082  "spa"     — returns 200 + the same shell for every path (the false-positive trap)
- *   :8083  "tight"   — everything configured correctly; should score 100 minus the http caveat
+ *   :8081  "sloppy": exposes .env, .git, phpinfo; no security headers; insecure cookies
+ *   :8082  "spa": returns 200 + the same shell for every path (the false-positive trap)
+ *   :8083  "tight": everything configured correctly; should score 100 minus the http caveat
  */
 import http from 'node:http';
 

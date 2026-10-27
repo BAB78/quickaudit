@@ -12,7 +12,7 @@ export function normalizeHeaders(input) {
 
   if (Array.isArray(input)) {
     // chrome.webRequest style: [{name, value}, ...]. Must be tested before the Headers
-    // branch below — arrays have an entries() method too, and would iterate as [index, value].
+    // branch below: arrays have an entries() method too, and would iterate as [index, value].
     for (const h of input) push(h.name, h.value ?? h.binaryValue ?? '');
     return out;
   }
@@ -35,7 +35,7 @@ export function normalizeHeaders(input) {
   return out;
 }
 
-/** First value of a header, or '' — the common case. */
+/** First value of a header, or '': the common case. */
 export function get(headers, name) {
   const v = headers[name.toLowerCase()];
   return v && v.length ? v[0] : '';

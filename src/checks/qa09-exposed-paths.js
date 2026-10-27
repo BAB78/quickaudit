@@ -10,7 +10,7 @@ export const def = {
 };
 
 /**
- * Each probe carries a content signature. Status 200 alone is never enough — SPAs and
+ * Each probe carries a content signature. Status 200 alone is never enough: SPAs and
  * catch-all rewrites happily return 200 with an HTML shell for every path on the site,
  * and that is where naive scanners generate their false positives.
  */
@@ -102,7 +102,7 @@ export async function run(ctx) {
     return result(def, 'warn',
       `${softHits.length} path(s) returned 200 without matching a known signature.`,
       [`Paths: ${softHits.map((s) => s.path).join(', ')}`,
-       'Probably a catch-all route rather than a real exposure — confirm by hand before reporting.']);
+       'Probably a catch-all route rather than a real exposure. Confirm by hand before reporting.']);
   }
 
   return result(def, 'pass',

@@ -18,7 +18,7 @@ export function run(ctx) {
   if (ctx.protocol !== 'https:') {
     return result(def, 'skip',
       'Page is not HTTPS, so mixed content does not apply.',
-      ['Fix QA-01 first — the whole page is plaintext.']);
+      ['Fix QA-01 first: the whole page is plaintext.']);
   }
 
   const insecure = (ctx.resources || []).filter((r) => /^http:\/\//i.test(r.url || ''));
@@ -26,7 +26,7 @@ export function run(ctx) {
     const n = (ctx.resources || []).length;
     return result(def, 'pass',
       n ? `All ${n} observed subresources load over HTTPS.` : 'No insecure subresources observed.',
-      n ? [] : ['No subresources were captured — a page with no external assets, or the collector ran before load.']);
+      n ? [] : ['No subresources were captured: a page with no external assets, or the collector ran before load.']);
   }
 
   const csp = get(ctx.headers, 'content-security-policy') || (ctx.metaCsp || [])[0] || '';
@@ -41,12 +41,12 @@ export function run(ctx) {
   if (passive.length) details.push(`Passive mixed content (${passive.length}): ${passive.slice(0, 5).map((r) => `[${r.type}] ${r.url}`).join(' | ')}${passive.length > 5 ? ` … +${passive.length - 5} more` : ''}`);
 
   if (upgraded) {
-    details.push('CSP includes upgrade-insecure-requests, so browsers rewrite these to HTTPS before they leave the machine — the markup is still wrong, but users are not exposed.');
+    details.push('CSP includes upgrade-insecure-requests, so browsers rewrite these to HTTPS before they leave the machine. The markup is still wrong, but users are not exposed.');
     return result(def, 'warn', `${insecure.length} http:// subresource(s), mitigated by CSP upgrade.`, details);
   }
 
   if (active.length) {
-    details.push('Active mixed content is blocked outright by modern browsers — these resources are almost certainly failing to load for real users.');
+    details.push('Active mixed content is blocked outright by modern browsers, so these resources are almost certainly failing to load for real users.');
     return result(def, 'fail', `${active.length} active http:// subresource(s) on an HTTPS page.`, details);
   }
   return result(def, 'warn', `${passive.length} passive http:// subresource(s) on an HTTPS page.`, details);

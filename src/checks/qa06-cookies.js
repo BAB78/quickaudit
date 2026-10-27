@@ -30,8 +30,8 @@ export function run(ctx) {
   }
 
   const details = [`${cookies.length} cookie${cookies.length > 1 ? 's' : ''} inspected: ${cookies.map((c) => c.name).join(', ')}`];
-  if (missingSecure.length) details.push(`Missing Secure: ${missingSecure.join(', ')} — these are sent over plaintext HTTP too.`);
-  if (missingHttpOnly.length) details.push(`Session-like cookie readable by JavaScript (no HttpOnly): ${missingHttpOnly.join(', ')} — any XSS steals the session. (Flagged by cookie name; confirm it really carries a session before acting.)`);
+  if (missingSecure.length) details.push(`Missing Secure: ${missingSecure.join(', ')}. These are sent over plaintext HTTP too.`);
+  if (missingHttpOnly.length) details.push(`Session-like cookie readable by JavaScript (no HttpOnly): ${missingHttpOnly.join(', ')}. Any XSS steals the session. (Flagged by cookie name; confirm it really carries a session before acting.)`);
   if (looseSameSite.length) details.push(`SameSite not restrictive: ${looseSameSite.join(', ')}.`);
 
   if (missingSecure.length || missingHttpOnly.length) {

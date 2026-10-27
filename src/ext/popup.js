@@ -61,7 +61,7 @@ function askPermission({ needsPermission, origin }) {
       return showError(`Could not request permission: ${e.message}`);
     }
     if (granted) scan();
-    else showError('Permission denied — QuickAudit cannot read this page.');
+    else showError('Permission denied: QuickAudit cannot read this page.');
   });
   box.appendChild(go);
   $('results').appendChild(box);

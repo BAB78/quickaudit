@@ -1,4 +1,4 @@
-# Phase 3 — accuracy report
+# Phase 3: accuracy report
 
 **Corpus:** 20 real sites, 10 chosen as likely-hardened (security vendors, large engineering
 orgs) and 10 as likely-looser (older stacks, CMS-driven, content properties).
@@ -16,7 +16,7 @@ something to do casually, so QA-09 is validated against local fixture servers in
 | | |
 |---|---|
 | Sites scanned | 20 |
-| Sites yielding reportable results | **17** (3 correctly declined — see below) |
+| Sites yielding reportable results | **17** (3 correctly declined: see below) |
 | Auto-gradeable verdicts audited | **102** |
 | Verdicts agreeing with independent logic | **101 / 102 (99.0%)** |
 | Verdicts correct after manual adjudication | **102 / 102 (100%)** |
@@ -30,14 +30,14 @@ straight from the recorded raw headers, using logic written separately from `src
 then diffs it against what QuickAudit reported. Disagreements are adjudicated by hand against
 an independent `Invoke-WebRequest` fetch of the live site.
 
-**The one disagreement — and QuickAudit was right.** On `about.gitlab.com` the audit script
+**The one disagreement, and QuickAudit was right.** On `about.gitlab.com` the audit script
 expected `QA-02: fail` (no CSP header); QuickAudit reported `warn`. QuickAudit had parsed a
 `<meta http-equiv="Content-Security-Policy">` out of the page body, which the header-only
 audit script never looks at. Independently confirmed present. The naive checker was wrong.
 
 ## Three false positives found and fixed during this phase
 
-The corpus earned its keep — it exposed three real bugs, all now fixed and regression-tested.
+The corpus earned its keep: it exposed three real bugs, all now fixed and regression-tested.
 
 **1. WAF challenge pages were being audited as if they were the site.**
 `sourceforge.net` was reported as "No Strict-Transport-Security". An independent fetch showed
@@ -48,13 +48,13 @@ faithfully describing *the challenge page's* headers.
 This is a false-positive class that would have made the tool untrustworthy on any WAF-fronted
 site. `detectChallenge()` now recognises `cf-mitigated`, `x-amzn-waf-action: challenge`,
 interstitial titles, and WAF 403/429/503s; when one fires, every header-dependent check
-returns `skip` with an explanation rather than a finding. Three corpus sites — npmjs.com,
-sourceforge.net, imdb.com — are now correctly declined rather than wrongly reported.
+returns `skip` with an explanation rather than a finding. Three corpus sites: npmjs.com,
+sourceforge.net, imdb.com: are now correctly declined rather than wrongly reported.
 
 Note this affects the CLI far more than the extension: the extension reads the headers the
 user's own browser received on a real navigation, which has already passed any challenge.
 
-**2. `origin-when-cross-origin` was graded as a URL leak.** It isn't — it sends the origin
+**2. `origin-when-cross-origin` was graded as a URL leak.** It isn't: it sends the origin
 alone cross-origin, not the path. It was in the same bucket as `unsafe-url`. Now only
 `unsafe-url` fails; `no-referrer-when-downgrade` and `origin-when-cross-origin` warn. This
 also stopped `stripe.com` being marked FAIL for a policy that leaks far less than the label
@@ -63,30 +63,30 @@ implied.
 **3. `X-Frame-Options`-only sites were warned at.** Every current browser still honours XFO,
 so `X-Frame-Options: SAMEORIGIN` is genuine clickjacking protection, not a defect. It now
 passes with a note recommending `frame-ancestors`. This had been firing on stripe, python.org,
-nasa.gov and sourceforge — four warnings that were pedantry, not findings. (It was also a
+nasa.gov and sourceforge: four warnings that were pedantry, not findings. (It was also a
 deviation from the PRD, which specified PASS.)
 
-## QA-08 (vulnerable libraries) — spot-checked individually
+## QA-08 (vulnerable libraries): spot-checked individually
 
 Six sites produced a detection; the CVE-bearing one was verified by hand.
 
 | Site | Detected | Verdict | Verified |
 |---|---|---|---|
-| python.org | jquery@1.8.2, jquery-ui@1.12.1 | warn | ✅ Page source confirms `jquery-1.8.2.min.js` and `jquery-ui-1.12.1.min.js`; live page globals independently report `jQuery.fn.jquery = 1.8.2` and `jQuery.ui.version = 1.12.1`. 5 + 4 real advisories (CVE-2020-11023, CVE-2019-11358, CVE-2021-41182, …), all MODERATE, so `warn` not `fail` — correct. |
+| python.org | jquery@1.8.2, jquery-ui@1.12.1 | warn | ✅ Page source confirms `jquery-1.8.2.min.js` and `jquery-ui-1.12.1.min.js`; live page globals independently report `jQuery.fn.jquery = 1.8.2` and `jQuery.ui.version = 1.12.1`. 5 + 4 real advisories (CVE-2020-11023, CVE-2019-11358, CVE-2021-41182, …), all MODERATE, so `warn` not `fail`: correct. |
 | owasp.org | jquery@3.7.1 | pass | ✅ current, no advisories |
 | apache.org | jquery@3.7.1 (banner) | pass | ✅ |
 | nasa.gov | jquery@3.7.1 (banner) | pass | ✅ |
 | jquery.com | jquery@4.0.0 | pass | ✅ |
 | w3schools.com | html5shiv@3.7.0, respond.js@1.4.2 | pass | ✅ no npm advisories |
 
-Zero spurious library detections across all 20 sites — the URL denylist (`app`, `main`,
+Zero spurious library detections across all 20 sites: the URL denylist (`app`, `main`,
 `bundle`, `vendor`, …) and the date-version filter did their job. No `/static/app-1.2.3.js`
 was ever mistaken for a library.
 
 **Recall is the real limitation, not precision.** 11 of 17 scannable sites yielded no library
 detection at all. Modern bundlers strip version markers, and the Node collector cannot read
 page globals. This is why QA-08 returns **`skip`, never `pass`**, when nothing is detected, and
-says so: *"A clean result here is not a clean bill of health — audit your lockfile instead."*
+says so: *"A clean result here is not a clean bill of health: audit your lockfile instead."*
 The extension does materially better here, since it reads live globals: on python.org the
 in-browser probe recovered `jquery@1.8.2` and `jquery-ui@1.12.1` directly from `window`.
 
@@ -120,13 +120,13 @@ https://www.nasa.gov/                 +  X  +  X  ~  +  +  +  .  +     72
 
 Notable true positives, all independently confirmed:
 
-- **wikipedia.org** (the portal page) — no CSP, no `X-Frame-Options`, no `nosniff`.
-- **about.gitlab.com** — no framing protection and no `nosniff` on GitLab's marketing site.
-- **1password.com** — `unleash-session-id` cookie set without `Secure` on an HTTPS origin.
+- **wikipedia.org** (the portal page): no CSP, no `X-Frame-Options`, no `nosniff`.
+- **about.gitlab.com**: no framing protection and no `nosniff` on GitLab's marketing site.
+- **1password.com**: `unleash-session-id` cookie set without `Secure` on an HTTPS origin.
   The accompanying HttpOnly flag comes from a *name* heuristic and the report now says so;
   the missing `Secure` is a plain fact about the header.
-- **jquery.com, w3schools.com** — no HSTS at all.
-- **nasa.gov, imdb.com, wikipedia.org** — no CSP.
+- **jquery.com, w3schools.com**: no HSTS at all.
+- **nasa.gov, imdb.com, wikipedia.org**: no CSP.
 
 ## Honest limitations
 
@@ -137,7 +137,7 @@ Notable true positives, all independently confirmed:
   is visible; in the extension the browser cookie store is authoritative and complete. The
   `HttpOnly` finding is name-heuristic and is labelled as such.
 - **QA-07 under-reports in the CLI**, which sees only markup, not runtime-injected resources.
-  The extension reads `PerformanceResourceTiming` plus a DOM sweep and catches both — verified
+  The extension reads `PerformanceResourceTiming` plus a DOM sweep and catches both: verified
   in a real browser, where it correctly caught an `http://` script the browser had *blocked*
   (blocked resources leave no performance entry, which is why both sources are needed).
 - **A 100 score means "the ten common misconfigurations are absent."** It is not a statement

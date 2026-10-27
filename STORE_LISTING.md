@@ -1,4 +1,4 @@
-# Store listings — QuickAudit v1.0.0
+# Store listings: QuickAudit v1.0.0
 
 **Status: DRAFT. Nothing has been submitted anywhere.** The copy below is shared across
 stores; the per-store notes at the bottom cover what differs.
@@ -7,14 +7,14 @@ stores; the per-store notes at the bottom cover what differs.
 |---|---|---|---|
 | Chrome Web Store | `quickaudit-1.0.0-chrome.zip` | $5 one-time | Reaches Chrome; Brave/Opera/Vivaldi users install from here too |
 | Microsoft Edge Add-ons | `quickaudit-1.0.0-chrome.zip` | **free** | Same package, no code changes. Register as an **Individual**, not a Company |
-| Opera Add-ons | `quickaudit-1.0.0-chrome.zip` | **free** | Same package again. Lowest priority — Opera can install from the Chrome Web Store directly |
+| Opera Add-ons | `quickaudit-1.0.0-chrome.zip` | **free** | Same package again. Lowest priority: Opera can install from the Chrome Web Store directly |
 | addons.mozilla.org | `quickaudit-1.0.0-firefox.zip` | **free** | Review is faster now that no `webRequest` permission is requested |
-| Apple App Store | `quickaudit-1.0.0-safari.zip` | **already paid** | Existing BAB Studios membership covers it; needs macOS + Xcode; unverified — see BROWSERS.md |
+| Apple App Store | `quickaudit-1.0.0-safari.zip` | **already paid** | Existing BAB Studios membership covers it; needs macOS + Xcode; unverified: see BROWSERS.md |
 
 **Recommendation: submit Chrome + Edge + Firefox first.** Two of the three are free, and
 together they cover essentially the entire desktop developer audience.
 
-Safari is now free to publish — the Apple Developer Program membership used for Amora covers
+Safari is now free to publish: the Apple Developer Program membership used for Amora covers
 unlimited apps. But it still costs about a day of work that the other three don't: the
 extension must be wrapped in a macOS container app with real UI of its own (Apple rejects empty
 wrappers under guideline 4.2), signed with a **Mac** App Distribution certificate that doesn't
@@ -25,7 +25,7 @@ tool with an active-probing check. Get feedback from the lenient stores first.
 
 ## Name (45 char limit)
 
-`QuickAudit — web security checklist`
+`QuickAudit: web security checklist`
 
 ## Short description (132 char limit)
 
@@ -41,7 +41,7 @@ Developer Tools
 
 **A pre-pentest sanity check that takes five seconds instead of fifteen minutes.**
 
-Before you pay for a penetration test — or before you ship — there's a set of boring,
+Before you pay for a penetration test (or before you ship) there's a set of boring,
 mechanical misconfigurations that show up on a depressing share of production sites. No HSTS.
 No CSP. Session cookies without HttpOnly. A `.git` directory served to the public internet.
 jQuery 1.8 with four known XSS advisories.
@@ -54,28 +54,28 @@ QuickAudit is that checklist, as one button.
 
 **The ten checks**
 
-1. **Transport security** — HTTPS, plus HSTS with a `max-age` that actually means something
-2. **Content-Security-Policy** — present, enforcing (not report-only), and not defeated by
+1. **Transport security**: HTTPS, plus HSTS with a `max-age` that actually means something
+2. **Content-Security-Policy**: present, enforcing (not report-only), and not defeated by
    `'unsafe-inline'` / `'unsafe-eval'` / wildcards. Nonces and `'strict-dynamic'` are
    understood, so a modern strict policy passes instead of being nagged at
-3. **Clickjacking protection** — CSP `frame-ancestors` or `X-Frame-Options`
-4. **MIME-sniffing** — `X-Content-Type-Options: nosniff`
-5. **Referrer & Permissions policy** — flags policies that leak full URLs to third parties
-6. **Cookie security flags** — `Secure`, `HttpOnly` on session cookies, explicit `SameSite`
-7. **Mixed content** — `http://` subresources on an HTTPS page, split into active and passive
-8. **JavaScript libraries with known CVEs** — versions read from live page globals, script
+3. **Clickjacking protection**: CSP `frame-ancestors` or `X-Frame-Options`
+4. **MIME-sniffing**: `X-Content-Type-Options: nosniff`
+5. **Referrer & Permissions policy**: flags policies that leak full URLs to third parties
+6. **Cookie security flags**: `Secure`, `HttpOnly` on session cookies, explicit `SameSite`
+7. **Mixed content**: `http://` subresources on an HTTPS page, split into active and passive
+8. **JavaScript libraries with known CVEs**: versions read from live page globals, script
    URLs and source banners, looked up against **OSV.dev**. Not a hardcoded list that goes
    stale the week it ships
-9. **Exposed sensitive files** — `/.env`, `/.git/HEAD`, `/.htpasswd`, `/actuator/env` and
+9. **Exposed sensitive files**: `/.env`, `/.git/HEAD`, `/.htpasswd`, `/actuator/env` and
    nine more. **Off by default** (see below)
-10. **Server version disclosure** — banners that hand attackers your exact build number
+10. **Server version disclosure**: banners that hand attackers your exact build number
 
 Every finding cites the header or artifact that caused it, and gives you the specific line to
 add. No "consider reviewing your security posture."
 
 **About check 9**
 
-Nine of the ten checks are entirely passive — they read what the page already sent your
+Nine of the ten checks are entirely passive: they read what the page already sent your
 browser. Check 9 is the exception: it requests about a dozen well-known paths on the site
 you're looking at.
 
@@ -90,23 +90,23 @@ don't generate a wall of false positives.
 QuickAudit is not a vulnerability scanner and does not replace one. It sends no payloads,
 attempts no exploits, and cannot find a business-logic flaw or an IDOR. It is the checklist
 you run *first* so a real assessment isn't full of trivia. A perfect score means the ten
-common misconfigurations are absent — not that the application is secure. The tool says so
+common misconfigurations are absent, not that the application is secure. The tool says so
 in the report footer.
 
 **Privacy**
 
 QuickAudit sends exactly one kind of data off your machine: detected library `name@version`
-strings, to `api.osv.dev`, to look up known CVEs. No URLs. No page content. No cookie values —
+strings, to `api.osv.dev`, to look up known CVEs. No URLs. No page content. No cookie values:
 the code reads cookie *flags* and deliberately discards values. No analytics. No account. No
 telemetry. Results are stored in local extension storage and nowhere else.
 
-Host access is requested **one site at a time, when you click Scan** — not for all sites at
+Host access is requested **one site at a time, when you click Scan**, not for all sites at
 install. Click Scan on `example.com` and Chrome asks you about `example.com`.
 
 **Free vs Pro**
 
-All ten checks are free, unlimited, forever. Pro is a one-time $19 purchase — no
-subscription, no account, no server — that unlocks HTML/PDF report export, saved custom check
+All ten checks are free, unlimited, forever. Pro is a one-time $19 purchase (no
+subscription, no account, no server) that unlocks HTML/PDF report export, saved custom check
 sets, and scan history. Licence keys verify offline against a public key inside the
 extension.
 
@@ -132,13 +132,13 @@ Reviewers reject vague answers here, so each is tied to a specific check.
 executes from the packaged files.
 
 **Data usage disclosures to select:**
-- Does not collect or use personally identifiable information — ✅
+- Does not collect or use personally identifiable information: ✅
 - Does not collect health, financial, authentication, personal communications, location, or
-  user activity data — ✅
-- Does not collect website content — ✅ (library version strings only, and no page text)
-- Not sold to third parties, not used for creditworthiness, not used for unrelated purposes — ✅
+  user activity data: ✅
+- Does not collect website content: ✅ (library version strings only, and no page text)
+- Not sold to third parties, not used for creditworthiness, not used for unrelated purposes: ✅
 
-**Anticipated review question — "is this a hacking tool?"**
+**Anticipated review question: "is this a hacking tool?"**
 Check 9 is the only one that sends requests. Answer plainly: it is disabled by default,
 requires an explicit authorisation acknowledgement, is limited to ~14 fixed paths on the
 single origin the user is already viewing, has no crawler and no wordlist input, and exists
@@ -149,13 +149,13 @@ consent screen in `src/ext/options.html` and screenshot 4.
 
 ## Screenshots to capture (1280×800)
 
-1. **Popup with a real failing site** — score ring at ~49, several red FAIL rows, one expanded
+1. **Popup with a real failing site**: score ring at ~49, several red FAIL rows, one expanded
    showing the offending header and the exact fix line. This is the money shot.
-2. **Popup on a well-configured site** — mostly green, score 98. Shows it isn't a fear machine.
-3. **QA-08 expanded** — jQuery 1.8.2 with CVE IDs, severities and "fixed in 1.9.0".
-4. **Options page, active-check section** — the consent gate, visible and unticked. Doubles as
+2. **Popup on a well-configured site**: mostly green, score 98. Shows it isn't a fear machine.
+3. **QA-08 expanded**: jQuery 1.8.2 with CVE IDs, severities and "fixed in 1.9.0".
+4. **Options page, active-check section**: the consent gate, visible and unticked. Doubles as
    the answer to the reviewer question above.
-5. **Exported HTML report** — the Pro artifact you'd hand a client.
+5. **Exported HTML report**: the Pro artifact you'd hand a client.
 
 ## Small promo tile (440×280)
 
@@ -165,11 +165,11 @@ Shield mark on white, `QuickAudit` wordmark, strapline *"Ten security checks. On
 
 ## Per-store notes
 
-**Microsoft Edge Add-ons** — takes the Chromium package unmodified. Registration is free.
+**Microsoft Edge Add-ons**: takes the Chromium package unmodified. Registration is free.
 The listing form is near-identical to Chrome's, so the copy above pastes straight in. Worth
 doing purely because it costs nothing.
 
-**addons.mozilla.org** — free. QuickAudit no longer requests `webRequest`, which is the
+**addons.mozilla.org**: free. QuickAudit no longer requests `webRequest`, which is the
 permission that most reliably triggers slow human review, so this should move faster than
 originally planned. Two things AMO reviewers still want:
 
@@ -179,23 +179,23 @@ originally planned. Two things AMO reviewers still want:
   QuickAudit reads cookie *flags* only and never reads, stores or transmits cookie values.
 
 AMO also enforces the extension id (`quickaudit@babstudios.dev`) declared in
-`browser_specific_settings` — it must stay stable across versions or you lose the listing's
+`browser_specific_settings`: it must stay stable across versions or you lose the listing's
 update path.
 
-**Opera Add-ons** (https://addons.opera.com/developer/) — free, takes the Chromium zip
+**Opera Add-ons** (https://addons.opera.com/developer/): free, takes the Chromium zip
 unmodified. Two things to know before spending time on it:
 
 - **Opera users can already install from the Chrome Web Store**, so the marginal reach is
   small. Do this last, if at all.
 - **Opera's manifest validator is stricter and lags Chrome's.** Developers have hit rejections
-  for MV3 keys Chrome accepts. QuickAudit should pass — it declares no `content_scripts` and
+  for MV3 keys Chrome accepts. QuickAudit should pass: it declares no `content_scripts` and
   reaches the main world through `scripting.executeScript` at runtime rather than a manifest
-  key — but `optional_host_permissions` is newer, and if anything gets rejected there, that is
+  key, but `optional_host_permissions` is newer, and if anything gets rejected there, that is
   the first thing to look at. Opera's own
   [acceptance criteria](https://help.opera.com/en/extensions/acceptance-criteria/) are worth
   a read first.
 
-**Apple App Store** — needs macOS, Xcode, and a $99/year membership. Deferred; see
+**Apple App Store**: needs macOS, Xcode, and a $99/year membership. Deferred; see
 [BROWSERS.md](BROWSERS.md).
 
 ---
@@ -206,10 +206,10 @@ unmodified. Two things to know before spending time on it:
 - [x] Source URL set to `https://github.com/BAB78/quickaudit`
 - [ ] Pay the one-time $5 Chrome Web Store registration fee (Edge and AMO are free)
 - [ ] Set a real contact address on the AMO listing (required, and publicly visible)
-- [ ] Host a privacy policy at a public URL — once the repo is public, use
+- [ ] Host a privacy policy at a public URL: once the repo is public, use
       `https://github.com/BAB78/quickaudit/blob/master/PRIVACY.md`
 - [ ] Capture the five screenshots
 - [ ] `npm test` green (unit + compat + integration + both namespace modes)
 - [ ] `node tools/build.mjs` → upload the per-store zips from `build/`
-- [ ] Load unpacked in **Chrome and Firefox** and click through every check by hand —
+- [ ] Load unpacked in **Chrome and Firefox** and click through every check by hand:
       the automated suite stubs the browser APIs; it does not replace one real run per engine

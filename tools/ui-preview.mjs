@@ -4,8 +4,8 @@
  * and a *real* scan report loaded from the CLI.
  *
  * Automated tests stub the browser away entirely, so nothing in the suite proves the UI is
- * not visually broken. This serves the real popup.html/popup.js unmodified — only an inline
- * stub is injected ahead of the module script — so layout, CSS and render logic get exercised
+ * not visually broken. This serves the real popup.html/popup.js unmodified: only an inline
+ * stub is injected ahead of the module script, so layout, CSS and render logic get exercised
  * by a genuine engine.
  *
  *   node tools/ui-preview.mjs [url]      # defaults to a canned wikipedia.org report
@@ -22,7 +22,7 @@ import { memoryCache } from '../src/core/osv.js';
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 /**
- * Served root is src/, not src/ext/ — options.js imports `../checks/index.js`, so flattening
+ * Served root is src/, not src/ext/: options.js imports `../checks/index.js`, so flattening
  * the tree would 404 exactly the import the real extension resolves fine.
  */
 const srcDir = path.join(root, 'src');
@@ -99,7 +99,7 @@ const server = http.createServer((req, res) => {
 server.listen(PORT, '127.0.0.1', () => {
   console.log(`popup   http://127.0.0.1:${PORT}/ext/popup.html`);
   console.log(`options http://127.0.0.1:${PORT}/ext/options.html`);
-  console.log(`report  ${report.url} — score ${report.score}`);
+  console.log(`report  ${report.url}: score ${report.score}`);
 });
 
 process.on('SIGINT', () => { server.close(); process.exit(0); });

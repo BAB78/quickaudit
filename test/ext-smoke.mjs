@@ -6,8 +6,8 @@
  *
  * Runs the whole suite twice, once per namespace shape:
  *
- *   chromium — only `chrome`, promise-based (MV3).
- *   firefox  — `browser` promise-based AND a callback-only `chrome` alias alongside it.
+ *   chromium: only `chrome`, promise-based (MV3).
+ *   firefox: `browser` promise-based AND a callback-only `chrome` alias alongside it.
  *              The alias returns undefined instead of a promise, so any code that reaches for
  *              `chrome.*` directly fails loudly here instead of silently in the wild.
  *
@@ -102,7 +102,7 @@ const promiseNamespace = () => ({
 
 /**
  * Firefox's `chrome` alias: callback-based, returns undefined. Awaiting anything on it
- * yields undefined rather than data — exactly the failure this mode exists to catch.
+ * yields undefined rather than data: exactly the failure this mode exists to catch.
  */
 function callbackAlias(promised) {
   return {

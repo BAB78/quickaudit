@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * QuickAudit CLI — the same ten checks the extension runs, from a terminal.
+ * QuickAudit CLI: the same ten checks the extension runs, from a terminal.
  * Exists mostly so the checks can be validated against real sites in CI without a browser.
  *
  *   node tools/cli.mjs https://example.com [--active] [--json]

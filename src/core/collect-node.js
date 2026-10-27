@@ -23,7 +23,7 @@ export async function collect(url, opts = {}) {
   const u = new URL(finalUrl);
 
   if (finalUrl !== url) notes.push(`Followed redirect: ${url} → ${finalUrl}`);
-  if (!res.ok) notes.push(`Origin responded HTTP ${res.status} — header checks still apply, but this may not be the real page.`);
+  if (!res.ok) notes.push(`Origin responded HTTP ${res.status}. Header checks still apply, but this may not be the real page.`);
 
   const challenge = detectChallenge(res.status, headers, html);
   if (challenge) notes.push(challenge);
@@ -152,7 +152,7 @@ export function makeProber(origin, timeout = 8000, delayMs = 150) {
  * Detect a WAF / bot-protection interstitial.
  *
  * This matters more than it looks. When Cloudflare or AWS WAF serves a challenge, the
- * response headers belong to the *challenge*, not to the site — so a scanner happily reports
+ * response headers belong to the *challenge*, not to the site, so a scanner happily reports
  * "no HSTS, no CSP" about a site that sets both. Found exactly this way on sourceforge.net
  * during the Phase 3 corpus run.
  */

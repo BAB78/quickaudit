@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>QuickAudit — Settings</title>
+  <title>QuickAudit settings</title>
   <link rel="stylesheet" href="options.css">
 </head>
 <body>
@@ -16,11 +16,11 @@
   </section>
 
   <section id="active">
-    <h2>Active check — exposed sensitive files</h2>
+    <h2>Active check: exposed sensitive files</h2>
     <p class="hint">
       QA-09 is the only check that sends requests. It performs up to 14 <code>GET</code> requests
       for well-known paths (<code>/.env</code>, <code>/.git/HEAD</code>, …) against the origin of the
-      tab you're on. No crawling, no wordlists, no other host — ever.
+      tab you're on. No crawling, no wordlists, no other host, ever.
     </p>
     <label class="toggle">
       <input type="checkbox" id="activeChecks">

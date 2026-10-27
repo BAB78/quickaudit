@@ -1,4 +1,4 @@
-# QuickAudit — PRD v1
+# QuickAudit: PRD v1
 
 **One line:** A one-click OWASP-style sanity check for the site in your browser tab. Ten concrete checks, pass/fail, in under five seconds.
 
@@ -8,7 +8,7 @@
 
 ## 1. Problem
 
-Before you pay for a pentest — or before you ship — there is a set of ~10 boring, mechanical
+Before you pay for a pentest (or before you ship) there is a set of ~10 boring, mechanical
 misconfigurations that show up on a depressing fraction of production sites: no HSTS, no CSP,
 cookies without `Secure`, a `.git` directory served over HTTP, jQuery 1.8 with four known XSS
 CVEs. Finding these today means running `curl -I`, eyeballing headers you half-remember,
@@ -18,11 +18,11 @@ That's 15 minutes of tedium per site, so people skip it, so it ships broken.
 
 ## 2. Who it's for
 
-- **Solo devs / small teams shipping web apps** — want a pre-deploy sanity check without learning ZAP.
-- **Small security teams / freelance pentesters** — want a 5-second triage pass on a target
+- **Solo devs / small teams shipping web apps**: want a pre-deploy sanity check without learning ZAP.
+- **Small security teams / freelance pentesters**: want a 5-second triage pass on a target
   before deciding where to spend real effort. Not a replacement for Burp; a way to skip
   writing the "you're missing HSTS" finding by hand.
-- **Agencies doing client handoffs** — want a one-page artifact showing the basics are covered.
+- **Agencies doing client handoffs**: want a one-page artifact showing the basics are covered.
 
 **Explicit non-goal:** this is not a scanner. No crawling, no fuzzing, no payloads, no auth
 bypass attempts, no DAST. If you want that, use ZAP or Burp. QuickAudit is the checklist you
@@ -48,42 +48,42 @@ and evidence. Nothing is "advisory vibes"; every FAIL cites the header or artifa
 Severity is QuickAudit's own rating of *this misconfiguration on a typical production site*,
 not a CVSS score.
 
-### Passive checks (1–7, 10) — read only what the page already sent
+### Passive checks (1-7, 10): read only what the page already sent
 
-**QA-01 · Transport security (HTTPS + HSTS)** — severity: **high**
+**QA-01 · Transport security (HTTPS + HSTS)**, severity **high**
 - FAIL if the page is served over `http:`.
 - FAIL if `Strict-Transport-Security` is absent on an HTTPS page.
 - WARN if present but `max-age` < 15552000 (180d), or `includeSubDomains` is missing.
 - PASS if `max-age >= 15552000` and `includeSubDomains` present.
 - Evidence: the raw header value. Fix: exact `Strict-Transport-Security` line to add.
 
-**QA-02 · Content-Security-Policy** — severity: **high**
-- FAIL if no `Content-Security-Policy` header (a `<meta>` CSP counts, but downgrades to WARN —
+**QA-02 · Content-Security-Policy**, severity **high**
+- FAIL if no `Content-Security-Policy` header (a `<meta>` CSP counts, but downgrades to WARN:
   it can't cover framing or sandbox).
 - WARN if present but `script-src` (or `default-src` fallback) contains `'unsafe-inline'`,
-  `'unsafe-eval'`, `*`, `http:`, or `data:` — these defeat the point.
+  `'unsafe-eval'`, `*`, `http:`, or `data:`: these defeat the point.
 - WARN if `object-src` and `base-uri` are unset and no `default-src` covers them.
 - PASS otherwise. Report-only policies are detected and reported as WARN, never PASS.
 - Evidence: the offending directive. Fix: a starter policy for the detected framework.
 
-**QA-03 · Clickjacking protection** — severity: **medium**
+**QA-03 · Clickjacking protection**, severity **medium**
 - PASS if CSP `frame-ancestors` is present (modern, correct answer).
 - PASS if `X-Frame-Options` is `DENY` or `SAMEORIGIN` and no conflicting `frame-ancestors`.
 - WARN if only `X-Frame-Options` with the obsolete `ALLOW-FROM` form, or both present and
   contradicting each other.
 - FAIL if neither is present.
 
-**QA-04 · MIME-sniffing protection** — severity: **low**
+**QA-04 · MIME-sniffing protection**, severity **low**
 - FAIL if `X-Content-Type-Options: nosniff` is absent. PASS if present. Binary, no nuance.
 
-**QA-05 · Referrer & Permissions policy** — severity: **low**
+**QA-05 · Referrer & Permissions policy**, severity **low**
 - WARN if `Referrer-Policy` is absent (browser defaults are now decent, so not a FAIL).
-- FAIL if `Referrer-Policy` is `unsafe-url` or `no-referrer-when-downgrade` — actively leaks
+- FAIL if `Referrer-Policy` is `unsafe-url` or `no-referrer-when-downgrade`: actively leaks
   full URLs cross-origin.
 - WARN if `Permissions-Policy` is absent (camera/mic/geo left at defaults).
 - PASS if `Referrer-Policy` is a same-origin-or-stricter value and `Permissions-Policy` exists.
 
-**QA-06 · Cookie security flags** — severity: **high**
+**QA-06 · Cookie security flags**, severity **high**
 - Reads real cookie objects (`chrome.cookies`) plus any `Set-Cookie` on this response.
 - FAIL for any cookie on an HTTPS page missing `Secure`.
 - FAIL for any *session-looking* cookie (name matches `sess|sid|auth|token|jwt|login|remember`)
@@ -93,7 +93,7 @@ not a CVSS score.
 - PASS if all cookies are `Secure` + session cookies are `HttpOnly` + `SameSite` explicit.
 - Evidence: per-cookie table of which flag is missing. Cookie *values* are never read or stored.
 
-**QA-07 · Mixed content** — severity: **medium**
+**QA-07 · Mixed content**, severity **medium**
 - On an HTTPS page, FAIL if any subresource was requested over `http:` (script/iframe/xhr =
   active mixed content, FAIL at high confidence; image/media/font = passive, WARN).
 - Collected from the content script via `PerformanceResourceTiming` + a DOM sweep of
@@ -101,35 +101,35 @@ not a CVSS score.
 - Mitigating: if CSP has `upgrade-insecure-requests` or `block-all-mixed-content`, downgrade
   to WARN and say so.
 
-**QA-10 · Server version disclosure** — severity: **low**
+**QA-10 · Server version disclosure**, severity **low**
 - WARN if `Server`, `X-Powered-By`, `X-AspNet-Version`, `X-AspNetMvc-Version`, `X-Generator`,
   or `X-Drupal-*` disclose a *version number* (regex `\d+\.\d+`).
 - INFO (pass) if the header exists but is version-less (`Server: cloudflare`).
 - Rationale: version banners turn "scan the internet" into "grep for this version."
 
-### Library check (8) — passive collection, network lookup
+### Library check (8): passive collection, network lookup
 
-**QA-08 · JavaScript libraries with known CVEs** — severity: **critical**
+**QA-08 · JavaScript libraries with known CVEs**, severity **critical**
 - Detects library + version from three sources, in confidence order:
   1. **In-page globals** (`jQuery.fn.jquery`, `angular.version.full`, `React.version`,
      `Vue.version`, `_.VERSION`, `moment.version`, `bootstrap.Tooltip.VERSION`, `d3.version`,
-     `Handlebars.VERSION`, `DOMPurify.version`, `axios.VERSION`, …) — highest confidence.
-  2. **Script URL patterns** — `/jquery-3.4.1.min.js`, `/npm/lodash@4.17.11/`, cdnjs and
+     `Handlebars.VERSION`, `DOMPurify.version`, `axios.VERSION`, …): highest confidence.
+  2. **Script URL patterns**: `/jquery-3.4.1.min.js`, `/npm/lodash@4.17.11/`, cdnjs and
      unpkg path shapes.
   3. **Source-comment banners** in the first 2KB of a script (`/*! jQuery v3.4.1`).
-- Queries **OSV.dev** `POST /v1/querybatch` (npm ecosystem) — one request for all detected
-  libraries — then `GET /v1/vulns/{id}` for details on hits only.
+- Queries **OSV.dev** `POST /v1/querybatch` (npm ecosystem): one request for all detected
+  libraries, then `GET /v1/vulns/{id}` for details on hits only.
 - FAIL if any library has a HIGH or CRITICAL vuln; WARN for MODERATE/LOW.
 - Evidence: library, detected version, CVE IDs, severity, one-line summary, fixed version.
 - **Why OSV and not a bundled list:** a hardcoded table is stale the week you ship it. OSV is
   maintained, free, no API key, and covers the npm ecosystem these libraries publish to.
   Results are cached 6h in `chrome.storage.local` keyed by `name@version` so repeat scans are
   free and offline-tolerant.
-- Degrades to SKIP (not FAIL) if OSV is unreachable — never invent a verdict.
+- Degrades to SKIP (not FAIL) if OSV is unreachable: never invent a verdict.
 
-### Active check (9) — sends requests, off by default
+### Active check (9): sends requests, off by default
 
-**QA-09 · Exposed sensitive files** — severity: **critical**
+**QA-09 · Exposed sensitive files**, severity **critical**
 - Probes a fixed list of ~13 paths on the current origin: `/.env`, `/.git/HEAD`, `/.git/config`,
   `/.svn/entries`, `/.DS_Store`, `/.htpasswd`, `/.npmrc`, `/.aws/credentials`, `/phpinfo.php`,
   `/server-status`, `/actuator/env`, `/backup.sql`, `/wp-config.php.bak`.
@@ -179,8 +179,8 @@ permissions at install time, and that is incompatible with §6's per-origin mode
 
 ## 6. Permissions & privacy
 
-- `storage` — settings + OSV cache. `cookies` — read cookie *flags* for QA-06.
-- `scripting`/`activeTab` — inject the collector on demand.
+- `storage` (settings + OSV cache. `cookies`) read cookie *flags* for QA-06.
+- `scripting`/`activeTab`: inject the collector on demand.
 - **Host permissions are optional and requested per-origin at scan time**, not granted at
   install. You click Scan on `example.com`, Chrome asks about `example.com`.
 - **No data leaves the browser except:** library `name@version` strings sent to OSV.dev.
@@ -189,7 +189,7 @@ permissions at install time, and that is incompatible with §6's per-origin mode
 
 ## 7. Monetization (v1)
 
-Free tier is the full ten checks, unlimited, forever — that's the thing worth having.
+Free tier is the full ten checks, unlimited, forever: that's the thing worth having.
 **Pro, one-time $19**, unlocks: PDF/HTML report export, custom check sets (enable/disable +
 severity overrides per profile), scan history, and CSV export. Offline license-key check
 (signed key, verified locally) so there is no subscription billing, no server, and no account
