@@ -5,13 +5,13 @@
  *   node tools/build.mjs            all targets
  *   node tools/build.mjs firefox    just one
  *
- * The source in src/ is identical for every browser — all engine differences live in the
+ * The source in src/ is identical for every browser: all engine differences live in the
  * manifest, plus feature detection in src/ext/browser-api.js. This script only assembles
  * manifests and zips; it never rewrites code, so what you test is what ships.
  */
-import { execFileSync } from 'node:child_process';
 import { mkdirSync, rmSync, cpSync, existsSync, readFileSync, writeFileSync, statSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { deflateRawSync, crc32 } from 'node:zlib';
 import path from 'node:path';
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
@@ -19,7 +19,7 @@ const base = JSON.parse(readFileSync(path.join(root, 'manifest.base.json'), 'utf
 
 export const TARGETS = {
   /**
-   * Chrome, Edge, Opera, Brave, Vivaldi — one identical package.
+   * Chrome, Edge, Opera, Brave, Vivaldi: one identical package.
    *
    * Deliberately not split per store. Edge and Opera are Chromium and accept this zip
    * unmodified, so separate targets would emit byte-identical files and invite the two to
@@ -36,7 +36,7 @@ export const TARGETS = {
     },
   },
   /**
-   * Firefox does not implement background.service_worker at all — MV3 extensions use a
+   * Firefox does not implement background.service_worker at all: MV3 extensions use a
    * non-persistent event page. ES modules in background scripts need Firefox 128+.
    */
   firefox: {
@@ -55,7 +55,7 @@ export const TARGETS = {
     },
   },
   /**
-   * Safari supports MV3 service workers but has no downloads API — the popup falls back to
+   * Safari supports MV3 service workers but has no downloads API: the popup falls back to
    * an <a download> click. Packaging requires macOS + Xcode; see BROWSERS.md.
    */
   safari: {
@@ -91,8 +91,7 @@ export function build(target) {
 
   const zipPath = path.join(root, 'build', `quickaudit-${manifest.version}-${target}.zip`);
   rmSync(zipPath, { force: true });
-  execFileSync('powershell', ['-NoProfile', '-Command',
-    `Compress-Archive -Path '${stage}\\*' -DestinationPath '${zipPath}' -Force`], { stdio: 'pipe' });
+  writeZip(zipPath, stage, staged);
 
   return { target, spec, manifest, zipPath, stage, files: staged.length, size: statSync(zipPath).size };
 }
@@ -107,6 +106,44 @@ function assertNoSecrets(stage, staged) {
       throw new Error(`REFUSING TO BUILD: a private key is embedded in ${path.relative(stage, f)}.`);
     }
   }
+}
+
+/**
+ * Writes a standard zip with forward-slash entry names. Windows PowerShell's Compress-Archive
+ * wrote backslashes ("icons\icon128.png"), which addons.mozilla.org rejects outright and which
+ * breaks icon paths on macOS and Linux installs. Fixed timestamps keep builds reproducible.
+ */
+function writeZip(zipPath, dir, files) {
+  const locals = [], centrals = [];
+  let offset = 0;
+  const DOS_TIME = 0, DOS_DATE = (2026 - 1980) << 9 | 1 << 5 | 1; // 1 Jan 2026, 00:00
+  for (const file of files.slice().sort()) {
+    const name = Buffer.from(path.relative(dir, file).split(path.sep).join('/'), 'utf8');
+    const data = readFileSync(file);
+    const packed = deflateRawSync(data, { level: 9 });
+    const stored = packed.length >= data.length;
+    const body = stored ? data : packed;
+    const crc = crc32(data) >>> 0;
+    const local = Buffer.alloc(30);
+    local.writeUInt32LE(0x04034b50, 0); local.writeUInt16LE(20, 4); local.writeUInt16LE(0x0800, 6);
+    local.writeUInt16LE(stored ? 0 : 8, 8); local.writeUInt16LE(DOS_TIME, 10); local.writeUInt16LE(DOS_DATE, 12);
+    local.writeUInt32LE(crc, 14); local.writeUInt32LE(body.length, 18); local.writeUInt32LE(data.length, 22);
+    local.writeUInt16LE(name.length, 26); local.writeUInt16LE(0, 28);
+    const central = Buffer.alloc(46);
+    central.writeUInt32LE(0x02014b50, 0); central.writeUInt16LE(20, 4); central.writeUInt16LE(20, 6);
+    central.writeUInt16LE(0x0800, 8); central.writeUInt16LE(stored ? 0 : 8, 10); central.writeUInt16LE(DOS_TIME, 12);
+    central.writeUInt16LE(DOS_DATE, 14); central.writeUInt32LE(crc, 16); central.writeUInt32LE(body.length, 20);
+    central.writeUInt32LE(data.length, 24); central.writeUInt16LE(name.length, 28);
+    central.writeUInt32LE(offset, 42);
+    locals.push(local, name, body);
+    centrals.push(central, name);
+    offset += local.length + name.length + body.length;
+  }
+  const dirSize = centrals.reduce((n, b) => n + b.length, 0);
+  const end = Buffer.alloc(22);
+  end.writeUInt32LE(0x06054b50, 0); end.writeUInt16LE(files.length, 8); end.writeUInt16LE(files.length, 10);
+  end.writeUInt32LE(dirSize, 12); end.writeUInt32LE(offset, 16);
+  writeFileSync(zipPath, Buffer.concat([...locals, ...centrals, end]));
 }
 
 function walk(dir) {
@@ -129,5 +166,5 @@ if (process.argv[1]?.endsWith('build.mjs')) {
     console.log(`         stores: ${r.spec.stores.join(', ')}`);
   }
   console.log('\nLoad unpacked for development from build/<target>/');
-  console.log('Nothing uploaded — every store submission is a manual, confirmed step.');
+  console.log('Nothing uploaded: every store submission is a manual, confirmed step.');
 }

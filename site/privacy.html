@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QuickAudit privacy policy</title><meta name="description" content="What data the QuickAudit browser extension handles: only detected library versions are sent, to OSV.dev.">
+<link rel="icon" href="/icon-128.png"><style>:root{--bg:#f7f8fa;--card:#ffffff;--ink:#14181f;--muted:#4b5563;--line:#dde1e7;--accent:#0f766e;--code:#eef1f4}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1216;--card:#161b22;--ink:#e6e9ee;--muted:#a3acb9;--line:#2a313b;--accent:#5eead4;--code:#1f2630}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:720px;margin:0 auto;padding:40px 16px 64px}header{display:flex;align-items:center;gap:12px;margin-bottom:28px}
+header img{width:40px;height:40px;border-radius:8px}header a{color:var(--ink);text-decoration:none;font-weight:700;font-size:18px}
+h1{font-size:30px;line-height:1.2;margin:0 0 8px;text-wrap:balance}h2{font-size:20px;margin:32px 0 8px}
+p,li{color:var(--ink)}.muted{color:var(--muted)}a{color:var(--accent)}code{background:var(--code);padding:1px 5px;border-radius:4px;font-size:.92em}
+ul{padding-left:22px}.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px 22px;margin:20px 0}
+.links{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}.links a{border:1px solid var(--line);border-radius:8px;padding:8px 14px;text-decoration:none;background:var(--card)}
+footer{margin-top:40px;font-size:14px;color:var(--muted)}</style></head>
+<body><main><header><img src="/icon-128.png" alt=""><a href="/">QuickAudit</a></header>
+<h1>QuickAudit privacy policy</h1>
+<p><em>Last updated: 2026-10-27</em></p>
+<p>QuickAudit is a browser extension that checks the security configuration of the page you are viewing. This policy describes every piece of data it handles.</p>
+<h2>What leaves your device</h2>
+<p><strong>One thing.</strong> When the vulnerable-library check runs, QuickAudit sends the names and versions of JavaScript libraries it detected on the page (for example <code>jquery@1.8.2</code>) to the public <a href="https://osv.dev">OSV.dev</a> vulnerability database to look up known advisories.</p>
+<p>That is the entire list. Specifically, QuickAudit does <strong>not</strong> transmit:</p>
+<ul><li>the URL of the page you scanned, or any URL</li><li>page content, text, form data, or HTML</li><li>cookie values: the extension reads cookie <em>flags</em> (<code>Secure</code>, <code>HttpOnly</code>, <code>SameSite</code>) and discards the values</li><li>your IP address to any service operated by us: there is no such service</li><li>usage analytics, crash reports, or telemetry of any kind</li><li>any identifier for you, your device, or your browser</li></ul>
+<p>There is no QuickAudit account, no login, and no server operated by the developer. The extension has no way to send data to the developer even in principle.</p>
+<h2>What is stored on your device</h2>
+<p>Held in local extension storage (<code>chrome.storage.local</code>), never synced or transmitted:</p>
+<ul><li>your settings (which checks are enabled; whether active probing is on)</li><li>your most recent scan report, so reopening the popup isn't a blank screen</li><li>a 6-hour cache of OSV.dev lookups, so repeat scans don't re-query the API</li><li>your Pro licence key, if you bought one</li></ul>
+<p>Uninstalling the extension deletes all of it. You can clear the report and cache at any time from Chrome's extension storage controls.</p>
+<h2>Requests QuickAudit makes</h2>
+<p><strong>To the site you are scanning.</strong> QuickAudit makes one request to the page you are already viewing in order to read its response headers. It is sent with your existing cookies so the result reflects the page as you actually see it.</p>
+<p><strong>Active file-exposure checking (QA-09), disabled by default.</strong> If you explicitly enable it and acknowledge that you are authorised to test the target, QuickAudit sends up to about 14 <code>GET</code> requests for well-known paths (<code>/.env</code>, <code>/.git/HEAD</code>, and similar) to the origin of the tab you are viewing. These requests are rate-limited, sent without credentials, and cannot be aimed at any host other than the one you are already on. Nothing is recorded or transmitted anywhere; results are shown to you and stored locally.</p>
+<p><strong>To api.osv.dev.</strong> As described above. OSV.dev is operated by the Open Source Security Foundation and has its own privacy policy.</p>
+<h2>Permissions and why they exist</h2>
+<p>QuickAudit does not request access to all websites at install. It asks for access to one origin at a time, when you click Scan on that site. Full per-permission justifications are in <a href="https://github.com/BAB78/quickaudit/blob/master/STORE_LISTING.md">STORE_LISTING.md</a>.</p>
+<h2>Changes</h2>
+<p>Material changes to this policy will be accompanied by an extension version bump and noted in the changelog.</p>
+<h2>Contact</h2>
+<p>Questions or a privacy concern: email babstudios.app@gmail.com or open an issue on the project repository.</p>
+<footer>QuickAudit is made by BAB Studios. Contact: <a href="mailto:babstudios.app@gmail.com">babstudios.app@gmail.com</a>. Source: <a href="https://github.com/BAB78/quickaudit">GitHub</a>.</footer>
+</main></body></html>

@@ -1,6 +1,6 @@
 # QuickAudit privacy policy
 
-_Last updated: 2026-07-30_
+_Last updated: 2026-10-27_
 
 QuickAudit is a browser extension that checks the security configuration of the page you are
 viewing. This policy describes every piece of data it handles.
@@ -8,16 +8,16 @@ viewing. This policy describes every piece of data it handles.
 ## What leaves your device
 
 **One thing.** When the vulnerable-library check runs, QuickAudit sends the names and versions
-of JavaScript libraries it detected on the page — for example `jquery@1.8.2` — to the public
+of JavaScript libraries it detected on the page (for example `jquery@1.8.2`) to the public
 [OSV.dev](https://osv.dev) vulnerability database to look up known advisories.
 
 That is the entire list. Specifically, QuickAudit does **not** transmit:
 
 - the URL of the page you scanned, or any URL
 - page content, text, form data, or HTML
-- cookie values (the extension reads cookie *flags* — `Secure`, `HttpOnly`, `SameSite` — and
-  discards values)
-- your IP address to any service operated by us — there is no such service
+- cookie values: the extension reads cookie *flags* (`Secure`, `HttpOnly`, `SameSite`) and
+  discards the values
+- your IP address to any service operated by us: there is no such service
 - usage analytics, crash reports, or telemetry of any kind
 - any identifier for you, your device, or your browser
 
@@ -65,4 +65,4 @@ the changelog.
 
 ## Contact
 
-Questions or a privacy concern: open an issue on the project repository.
+Questions or a privacy concern: email babstudios.app@gmail.com or open an issue on the project repository.

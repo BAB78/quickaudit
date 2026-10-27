@@ -1,6 +1,6 @@
 {
   "name": "quickaudit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "One-click OWASP-style security checklist for the page in your browser tab.",
   "type": "module",
   "private": true,
